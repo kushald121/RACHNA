@@ -1,0 +1,12 @@
+/* Implement Tailwind directives to main CSS file */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@font-face {
+  font-family: 'HM Amperserif';
+  src: url('https://db.onlinewebfonts.com/t/d4d44e39a57d866b0540d5e917309b83.woff2') format('woff2'),
+       url('https://db.onlinewebfonts.com/t/d4d44e39a57d866b0540d5e917309b83.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
