@@ -1,6 +1,8 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Helmet } from "react-helmet"; //browser tab and icon customization
+import Payment from "./pages/home/payment"
+import User1 from "./pages/sign-in/User1";
 
 // Core Function
 import { Home, Error, SignIn, NewArrivals } from './pages';
@@ -33,6 +35,15 @@ const App = () => {
 
         <Routes>
           <Route exact path="/luna-demo/" element={<Home />} />
+          {/* Payment */}
+          <Route path ="/luna-demo/payment"  element={<Payment/>}/>
+          
+
+
+          {/* Userlog */}
+       
+
+          {/* Other */}
           <Route path="/luna-demo/error/" element={<Error />} />
           <Route path="/luna-demo/sign-in/" element={<SignIn />} />
           <Route path="/luna-demo/new-arrivals/" element={<NewArrivals />} />
@@ -92,6 +103,8 @@ const App = () => {
           <Route path="/luna-demo/men/accessories/hats/adidas5" element={<Adidas5 />} />
 
           {/* Women Clothing */}
+
+           <Route path="/luna-demo/user1" element={<User1/>}/>
 
         </Routes>
       </div>
