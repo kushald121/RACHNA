@@ -5,6 +5,9 @@ import Payment from "./pages/home/payment"
 import User1 from "./pages/sign-in/User1";
 import AdminLogin from './pages/admin/AdminLogin.js';
 import Fav from '../src/pages/favorites/Fav.js';
+import AdminProductPages from './pages/product/AdminProductPages.js';
+import ProductOverview from './pages/product/ProductOverview.js';
+
 
 // Core Function
 import { Home, Error, SignIn, NewArrivals } from './pages';
@@ -51,6 +54,10 @@ const App = () => {
           <Route path="/luna-demo/new-arrivals/" element={<NewArrivals />} />
           <Route path="/luna-demo/admin-login/" element={<AdminLogin />} />
           <Route path="/luna-demo/favorites/" element={<Fav />} />
+          <Route path="/luna-demo/productpages/" element={<AdminProductPages />} />
+          <Route path="/luna-demo/productoverview/" element={<ProductOverview />} />
+
+
 
           {/* Men Clothing */}
           <Route path="/luna-demo/men/" element={<Men />} />
