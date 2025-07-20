@@ -14,7 +14,7 @@ const Footer = () => {
             {/* Side Headings */}
             <p class="max-w-xs mt-4 text-gray-500">Established in 2025</p>
             <p class="max-w-xs mt-2 text-gray-500">Based in Mumbai</p>
-            <a href=''>
+            <a href='/luna-demo'>
                 <p class="max-w-xs mt-2 text-gray-500 hover:underline hover:text-indigo-600">
                   aymn@gmail.com
                 </p>

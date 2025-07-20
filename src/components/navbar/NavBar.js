@@ -6,6 +6,7 @@ import { ShoppingCart } from "../../components";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import 'flag-icons/css/flag-icons.min.css';
+import { HeartIcon } from "@heroicons/react/20/solid";
 
 
 // TEXT INPUT CHANGE HERE ONLY
@@ -50,7 +51,7 @@ const navigation = {
   // Additional NavBar Pages
   pages: [
     { name: "About Us", href: "/luna-demo/error/" },
-    { name: "Admin", href: "/luna-demo/error/" },
+    { name: "Admin", href: "/luna-demo/admin-login/" },
   ],
 };
 
@@ -557,6 +558,16 @@ const NavBar = () => {
                   </Link>
                 </motion.div>
 
+                {/* Favorites */}
+                <motion.div className="flex lg:ml-6" variants={textMotion}>
+                  <Link
+                    to="/luna-demo/favorites/"
+                    className="p-2 text-gray-400 hover:text-red-500"
+                  >
+                    <HeartIcon className="h-6 w-6" aria-hidden="true" />
+                  </Link>
+                </motion.div>
+
                 {/* Shopping Cart */}
                 <motion.div
                   className="ml-4 flow-root lg:ml-6"
@@ -571,6 +582,7 @@ const NavBar = () => {
                       className="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-indigo-600"
                       aria-hidden="true"
                     />
+
                     {/* # of Products Selected */}
                     <span className="ml-2 text-sm font-medium text-gray-700">
                       0
