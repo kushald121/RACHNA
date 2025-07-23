@@ -7,6 +7,7 @@ import AdminLogin from './pages/admin/AdminLogin.js';
 import Fav from '../src/pages/favorites/Fav.js';
 import AdminProductPages from './pages/product/AdminProductPages.js';
 import ProductOverview from './pages/product/ProductOverview.js';
+import AllProductsPage from './pages/product/AllProductsPage.js';
 
 
 // Core Function
@@ -56,7 +57,8 @@ const App = () => {
           <Route path="/luna-demo/favorites/" element={<Fav />} />
           <Route path="/luna-demo/productpages/" element={<AdminProductPages />} />
           <Route path="/luna-demo/productoverview/" element={<ProductOverview />} />
-
+          <Route path="/luna-demo/allproducts/" element={<AllProductsPage/>} />
+          
 
 
           {/* Men Clothing */}
