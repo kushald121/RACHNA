@@ -7,7 +7,7 @@ import bhimLogo from '../../assets/qr/bhim.png';
 
 const Payment = () => {
   const upiId = "kushaldubey121-1@okaxis";
-  const amount = 1;
+  const amount = 501;
   const upiLink = `upi://pay?pa=${upiId}&pn=Bank+of+Maharashtra+Store&am=${amount}&cu=INR`;
 
   const copyUPI = () => {

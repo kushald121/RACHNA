@@ -2,15 +2,18 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Helmet } from "react-helmet"; //browser tab and icon customization
 import Payment from "./pages/home/payment"
-import User1 from "./pages/sign-in/User1";
+import User1 from "./pages/user/User1.js";
 import AdminLogin from './pages/admin/AdminLogin.js';
 import Fav from '../src/pages/favorites/Fav.js';
 import AdminProductPages from './pages/product/AdminProductPages.js';
 import ProductOverview from './pages/product/ProductOverview.js';
-
+import AdminControl from "./pages/admin/adminControl.js";
+import ProtectedRoutes from "./pages/utils/ProtectedRoutes.js";
+import AddProduct from "./pages/admin/Addproduct.jsx";
+import SplashCursor from './components/cursor/SplashCursor.jsx'
 
 // Core Function
-import { Home, Error, SignIn, NewArrivals } from './pages';
+import { Home, Error,  NewArrivals } from './pages';
 
 // Men Clothing
 import { Men, MenClothing, MenAccesories, MenBrands,
@@ -28,6 +31,7 @@ import { Nike1, Nike2, Nike3, Nike4, Nike5,
 
 const App = () => {
   return (
+    
     <Router> {/* Move the Router component here */}
       <div className="App">
         {/*Website TAB Description*/}
@@ -37,6 +41,7 @@ const App = () => {
           <link rel="canonical" href="https://www.google.com/" />
           <meta name="description" content="© 2023 Luna Inc. All Rights Reserved." />
         </Helmet>
+         <SplashCursor/>
 
         <Routes>
           <Route exact path="/luna-demo/" element={<Home />} />
@@ -46,11 +51,18 @@ const App = () => {
 
 
           {/* Userlog */}
+
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoutes/>}>
+            <Route element={<AdminControl/>} path="/luna-demo/admincontrol" />
+            <Route element={<AddProduct/>} path="/luna-demo/addproduct"/>
+          </Route>
        
 
-          {/* Other */}
+          {/* Admin */}
+       
           <Route path="/luna-demo/error/" element={<Error />} />
-          <Route path="/luna-demo/sign-in/" element={<SignIn />} />
+         
           <Route path="/luna-demo/new-arrivals/" element={<NewArrivals />} />
           <Route path="/luna-demo/admin-login/" element={<AdminLogin />} />
           <Route path="/luna-demo/favorites/" element={<Fav />} />

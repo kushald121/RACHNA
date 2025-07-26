@@ -1,10 +1,74 @@
 import React, { useState } from 'react'
 import { Footer, NavBar } from '../../components'
+import {LocateFixed} from "lucide-react";
 
 const User1 = () => {
+
+//Login relatedd useStates
+const [email,setEmail] = useState('');
+const [otp,setOtp] = useState('');
+const [otpSent, setOtpSent] = useState(false);
+const [otpVerified, setOtpVerified] = useState(false);
+const [resendTimer, setResendTimer] = useState(15);
+const [canResend, setCanResend] = useState(false);
+
+
   const [step, setStep] = useState(1)
   const [loginDone, setLoginDone] = useState(false)
   const [showNewAddress, setShowNewAddress] = useState(false)
+  const [address, setAddress] = useState('');
+    const [loading, setLoading] = useState(false);
+
+  React.useEffect(()=> {
+    if(otpSent && resendTimer> 0) {
+      const timer = setTimeout(()=> setResendTimer(resendTimer -1), 1000);
+      return()  => clearTimeout(timer);
+    }
+  }, [otpSent, resendTimer]);
+
+
+
+   const handleUseCurrentLocation = async () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation not supported by browser");
+      return;
+    }
+
+    setLoading(true);
+
+      navigator.geolocation.getCurrentPosition(async (position) => {
+      const { latitude, longitude } = position.coords;
+      console.log("Coordinates:", latitude, longitude);
+
+      const nominatimURL = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+
+      try {
+        const response = await fetch(nominatimURL, {
+          headers: {
+            'Accept': 'application/json',
+          }
+        });
+        const data = await response.json();
+        console.log("OSM Response:", data);
+
+        if (data.display_name) {
+          setAddress(data.display_name);
+        } else {
+          alert("Could not fetch address.");
+        }
+      } catch (err) {
+        alert("Error fetching address.");
+      }
+
+      setLoading(false);
+    }, (error) => {
+      alert("Error getting location: " + error.message);
+      setLoading(false);
+    });
+  };
+
+
+
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
@@ -26,8 +90,9 @@ const User1 = () => {
               {!loginDone ? (
                 <>
                   <input
-                    type="text"
-                    placeholder="Enter Email/Mobile number"
+                    type="email"
+                    placeholder="Enter "
+
                     className="w-full p-3 border rounded mb-4 outline-blue-500"
                   />
                   <p className="text-xs text-gray-600 mb-4">
@@ -63,7 +128,7 @@ const User1 = () => {
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-lg font-semibold text-gray-700">2) DELIVERY ADDRESS</h2>
-                <button className="text-blue-600 text-sm font-semibold hover:underline">EDIT</button>
+                <button className="text-blue-600 text-sm font-semibold hover:underline" >EDIT</button>
               </div>
 
               <div className="space-y-4">
@@ -100,9 +165,28 @@ const User1 = () => {
 
                 {showNewAddress && (
                   <div className="border rounded p-4 space-y-3">
+                    <button
+  className="rounded-md bg-blue-600 text-white p-2 hover:bg-blue-900"
+  onClick={handleUseCurrentLocation}
+  disabled={loading}
+>
+  {loading ? "Fetching Address..." : (<span><LocateFixed/> Use My Current Location</span>)}
+</button>
+
+
+
                     <input type="text" placeholder="Full Name" className="w-full p-3 border rounded outline-blue-500" />
                     <input type="text" placeholder="10-digit mobile number" className="w-full p-3 border rounded outline-blue-500" />
-                    <textarea placeholder="Address (Area and Street)" className="w-full p-3 border rounded outline-blue-500" rows="3"></textarea>
+                    
+                    {/* //Text area */}
+                    <textarea
+  placeholder="Address (Area and Street)"
+  className="w-full p-3 border rounded outline-blue-500"
+  rows="3"
+  value={address}
+  onChange={(e) => setAddress(e.target.value)}
+></textarea>
+
                     <input type="text" placeholder="Pincode" className="w-full p-3 border rounded outline-blue-500" />
                     <button className="w-fit bg-[#E50010] text-white px-6 py-2 rounded font-semibold hover:bg-orange-600">SAVE ADDRESS</button>
                   </div>
