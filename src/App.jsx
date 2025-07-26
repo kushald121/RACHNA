@@ -7,10 +7,15 @@ import AdminLogin from './pages/admin/AdminLogin.js';
 import Fav from '../src/pages/favorites/Fav.js';
 import AdminProductPages from './pages/product/AdminProductPages.js';
 import ProductOverview from './pages/product/ProductOverview.js';
+<<<<<<< HEAD
 import AdminControl from "./pages/admin/adminControl.js";
 import ProtectedRoutes from "./pages/utils/ProtectedRoutes.js";
 import AddProduct from "./pages/admin/Addproduct.jsx";
 import SplashCursor from './components/cursor/SplashCursor.jsx'
+=======
+import AllProductsPage from './pages/product/AllProductsPage.js';
+
+>>>>>>> 5e3cf3f665065c0d42bad42fa66280befb373591
 
 // Core Function
 import { Home, Error,  NewArrivals } from './pages';
@@ -68,7 +73,8 @@ const App = () => {
           <Route path="/luna-demo/favorites/" element={<Fav />} />
           <Route path="/luna-demo/productpages/" element={<AdminProductPages />} />
           <Route path="/luna-demo/productoverview/" element={<ProductOverview />} />
-
+          <Route path="/luna-demo/allproducts/" element={<AllProductsPage/>} />
+          
 
 
           {/* Men Clothing */}
