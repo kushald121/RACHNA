@@ -3,7 +3,7 @@ import { pool } from "../../db.js"; // Make sure to include `.js` if using ESMod
 
 const router = express.Router(); // ✅ CORRECTED: Use express.Router() instead of import
 
-router.post('/add-product', async (req, res) => { // ✅ FIXED: moved ')' from wrong place
+router.post('/', async (req, res) => { // ✅ FIXED: moved ')' from wrong place
   try {
     const {
       name,
@@ -19,7 +19,7 @@ router.post('/add-product', async (req, res) => { // ✅ FIXED: moved ')' from w
 
     // Insert into products table
     const productResult = await pool.query(
-      `INSERT INTO products (name, description, price, stock, gender,
+      `INSERT INTO products1 (name, description, price, stock, gender,
        size, discount, category)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING id`,

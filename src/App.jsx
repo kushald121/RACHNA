@@ -7,15 +7,11 @@ import AdminLogin from './pages/admin/AdminLogin.js';
 import Fav from '../src/pages/favorites/Fav.js';
 import AdminProductPages from './pages/product/AdminProductPages.js';
 import ProductOverview from './pages/product/ProductOverview.js';
-<<<<<<< HEAD
 import AdminControl from "./pages/admin/adminControl.js";
 import ProtectedRoutes from "./pages/utils/ProtectedRoutes.js";
 import AddProduct from "./pages/admin/Addproduct.jsx";
 import SplashCursor from './components/cursor/SplashCursor.jsx'
-=======
 import AllProductsPage from './pages/product/AllProductsPage.js';
-
->>>>>>> 5e3cf3f665065c0d42bad42fa66280befb373591
 
 // Core Function
 import { Home, Error,  NewArrivals } from './pages';
@@ -46,7 +42,7 @@ const App = () => {
           <link rel="canonical" href="https://www.google.com/" />
           <meta name="description" content="© 2023 Luna Inc. All Rights Reserved." />
         </Helmet>
-         <SplashCursor/>
+         {/* //<SplashCursor/> */}
 
         <Routes>
           <Route exact path="/luna-demo/" element={<Home />} />
