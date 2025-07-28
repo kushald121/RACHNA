@@ -8,22 +8,32 @@ import Fav from '../src/pages/favorites/Fav.js';
 import AdminProductPages from './pages/product/AdminProductPages.js';
 import ProductOverview from './pages/product/ProductOverview.js';
 import AllProductsPage from './pages/product/AllProductsPage.js';
-
+import Accessibility from './pages/HelpPages/Accessibility.js';
+import ContactUs from './pages/HelpPages/ContactUs.js';
+import PrivacyPolicy from './pages/HelpPages/PrivacyPolicy.js';
+import TermsAndConditions from './pages/HelpPages/TermsAndConditions.js';
+import RefundPolicy from './pages/HelpPages/RefundPolicy.js';
+import ShippingAndDilevery from './pages/HelpPages/ShippingAndDilevery.js';
 
 // Core Function
 import { Home, Error, SignIn, NewArrivals } from './pages';
 
 // Men Clothing
-import { Men, MenClothing, MenAccesories, MenBrands,
-         Tops, Bottoms, Innerwear, Outerwear, Activewear,
-         Hats, Sunglasses, Belts, Wallets, BagsBackpacks } from './pages';
+import {
+  Men, MenClothing, MenAccesories, MenBrands,
+  Tops, Bottoms, Innerwear, Outerwear, Activewear,
+  Hats, Sunglasses, Belts, Wallets, BagsBackpacks
+} from './pages';
 
-import { Nike1, Nike2, Nike3, Nike4, Nike5,
-         Zara1, Zara2, Zara3, Zara4, Zara5,
-         TommyJohn1, TommyJohn2, TommyJohn3, TommyJohn4, TommyJohn5,
-         NorthFace1, NorthFace2, NorthFace3, NorthFace4, NorthFace5,
-         GymShark1, GymShark2, GymShark3, GymShark4, GymShark5,
-         Adidas1, Adidas2, Adidas3, Adidas4, Adidas5, } from './pages';
+import {
+  Nike1, Nike2, Nike3, Nike4, Nike5,
+  Zara1, Zara2, Zara3, Zara4, Zara5,
+  TommyJohn1, TommyJohn2, TommyJohn3, TommyJohn4, TommyJohn5,
+  NorthFace1, NorthFace2, NorthFace3, NorthFace4, NorthFace5,
+  GymShark1, GymShark2, GymShark3, GymShark4, GymShark5,
+  Adidas1, Adidas2, Adidas3, Adidas4, Adidas5,
+} from './pages';
+
 
 // Women Clothing
 
@@ -42,12 +52,12 @@ const App = () => {
         <Routes>
           <Route exact path="/luna-demo/" element={<Home />} />
           {/* Payment */}
-          <Route path ="/luna-demo/payment"  element={<Payment/>}/>
-          
+          <Route path="/luna-demo/payment" element={<Payment />} />
+
 
 
           {/* Userlog */}
-       
+
 
           {/* Other */}
           <Route path="/luna-demo/error/" element={<Error />} />
@@ -57,11 +67,15 @@ const App = () => {
           <Route path="/luna-demo/favorites/" element={<Fav />} />
           <Route path="/luna-demo/productpages/" element={<AdminProductPages />} />
           <Route path="/luna-demo/productoverview/" element={<ProductOverview />} />
-          <Route path="/luna-demo/allproducts/" element={<AllProductsPage/>} />
-          
+          <Route path="/luna-demo/allproducts/" element={<AllProductsPage />} />
+          <Route path="/luna-demo/accessibility/" element={<Accessibility />} />
+          <Route path="/luna-demo/contactus/" element={<ContactUs />} />
+          <Route path="/luna-demo/privacypolicy/" element={<PrivacyPolicy />} />
+          <Route path="/luna-demo/termsandconditions/" element={<TermsAndConditions />} />
+          <Route path="/luna-demo/refundpolicy/" element={<RefundPolicy />} />
+          <Route path="/luna-demo/shippinganddelivery/" element={<ShippingAndDilevery />} />
 
-
-          {/* Men Clothing */}
+            {/* Men Clothing */}
           <Route path="/luna-demo/men/" element={<Men />} />
           <Route path="/luna-demo/men/clothing/" element={<MenClothing />} />
           <Route path="/luna-demo/men/accessories/" element={<MenAccesories />} />
@@ -84,7 +98,7 @@ const App = () => {
           <Route path="/luna-demo/men/clothing/tops/nike3" element={<Nike3 />} />
           <Route path="/luna-demo/men/clothing/tops/nike4" element={<Nike4 />} />
           <Route path="/luna-demo/men/clothing/tops/nike5" element={<Nike5 />} />
-          
+
           <Route path="/luna-demo/men/clothing/bottoms/zara1" element={<Zara1 />} />
           <Route path="/luna-demo/men/clothing/bottoms/zara2" element={<Zara2 />} />
           <Route path="/luna-demo/men/clothing/bottoms/zara3" element={<Zara3 />} />
@@ -117,7 +131,7 @@ const App = () => {
 
           {/* Women Clothing */}
 
-           <Route path="/luna-demo/user1" element={<User1/>}/>
+          <Route path="/luna-demo/user1" element={<User1 />} />
 
         </Routes>
       </div>

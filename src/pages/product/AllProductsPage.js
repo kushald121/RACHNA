@@ -374,7 +374,9 @@ function FiltersSidebar({ isOpen, onClose, filters, setFilters }) {
 
   const FilterSection = ({ title, items, selectedItems, onChange }) => (
     <div className="py-5 border-b border-zinc-200">
-      <h4 className="font-semibold text-zinc-800 mb-4 tracking-wide uppercase text-xs text-zinc-500">{title}</h4>
+      <h4 className="font-semibold  mb-4 tracking-wide uppercase text-xs text-zinc-500">
+        {title}
+      </h4>
       <div className="space-y-3">
         {items.map((item) => (
           <label key={item} className="flex items-center cursor-pointer group">
@@ -396,7 +398,9 @@ function FiltersSidebar({ isOpen, onClose, filters, setFilters }) {
   const sidebarContent = (
     <div className="p-7 h-full overflow-y-auto">
       <div className="flex justify-between items-center pb-4 mb-2 border-b border-zinc-200">
-        <h3 className="text-2xl font-bold text-zinc-900 tracking-tight">Filters</h3>
+        <h3 className="text-2xl font-bold text-zinc-900 tracking-tight">
+          Filters
+        </h3>
         <button
           onClick={onClose}
           className="lg:hidden text-zinc-500 hover:text-zinc-800"
@@ -487,96 +491,100 @@ const cardVariants = {
 };
 
 function ProductCard({ product, isWishlisted, onToggleWishlist }) {
-    const discount = product.originalPrice
-        ? Math.round(
-            ((product.originalPrice - product.price) / product.originalPrice) * 100
-        )
-        : 0;
+  const discount = product.originalPrice
+    ? Math.round(
+        ((product.originalPrice - product.price) / product.originalPrice) * 100
+      )
+    : 0;
 
-    const formatCurrency = (amount) => {
-        return new Intl.NumberFormat("en-IN", {
-            style: "currency",
-            currency: "INR",
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-        }).format(amount);
-    };
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
 
-    return (
-        <motion.div
-            variants={cardVariants}
-            layout
-            className="bg-white rounded-3xl flex flex-col overflow-hidden group relative border border-zinc-200/80 shadow-lg shadow-zinc-200/40 transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-200/40"
-        >
-            {/* --- Wishlist Button (MOVED HERE and RESTYLED) --- */}
-            <button
-                aria-label="Toggle Wishlist"
-                onClick={() => onToggleWishlist(product.id)}
-                className={`absolute top-80 right-6 z-10 flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-xl border-2 border-zinc-200 
+  return (
+    <motion.div
+      variants={cardVariants}
+      layout
+      className="bg-white rounded-3xl flex flex-col overflow-hidden group relative border border-zinc-200/80 shadow-lg shadow-zinc-200/40 transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-200/40"
+    >
+      {/* --- Wishlist Button (MOVED HERE and RESTYLED) --- */}
+      <button
+        aria-label="Toggle Wishlist"
+        onClick={() => onToggleWishlist(product.id)}
+        className={`absolute top-80 right-6 z-10 flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-xl border-2 border-zinc-200 
                            transform -translate-y-1/2 transition-all duration-300 ease-in-out
                            group-hover:scale-110 group-hover:-translate-y-[60%]
-                           ${isWishlisted ? "text-rose-500" : "text-zinc-500 hover:text-rose-500"}`}
-            >
-                {isWishlisted ? <FaHeart size={22} /> : <FiHeart size={22} />}
-            </button>
+                           ${
+                             isWishlisted
+                               ? "text-rose-500"
+                               : "text-zinc-500 hover:text-rose-500"
+                           }`}
+      >
+        {isWishlisted ? <FaHeart size={22} /> : <FiHeart size={22} />}
+      </button>
 
-            {/* --- Image Area --- */}
-            <div className="relative w-full h-80 overflow-hidden bg-zinc-100">
-                <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                
-                {discount > 0 && (
-                    <span className="absolute top-3 left-3 bg-gradient-to-r from-rose-500 via-indigo-500 to-zinc-900 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
-                        {discount}% OFF
-                    </span>
-                )}
+      {/* --- Image Area --- */}
+      <div className="relative w-full h-80 overflow-hidden bg-zinc-100">
+        <img
+          src={product.image}
+          alt={product.name}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
 
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <button className="flex items-center gap-2 text-white font-semibold py-2 px-4 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors">
-                        <FiEye size={18} />
-                        <span className="text-sm">Quick View</span>
-                    </button>
-                </div>
-            </div>
+        {discount > 0 && (
+          <span className="absolute top-3 left-3 bg-gradient-to-r from-rose-500 via-indigo-500 to-zinc-900 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+            {discount}% OFF
+          </span>
+        )}
 
-            {/* --- Details & Call-to-Action Area --- */}
-            <div className="p-6 flex flex-col flex-1">
-                <div className="flex-1">
-                    <p className="text-xs text-zinc-500 uppercase tracking-wider mb-1">
-                        {product.brand}
-                    </p>
-                    <h3 className="font-semibold text-zinc-800 text-lg leading-tight mb-3">
-                        {product.name}
-                    </h3>
-                    <div className="flex items-baseline gap-2 mt-4">
-                        <span className="text-2xl font-bold text-zinc-900">
-                            {formatCurrency(product.price * INR_CONVERSION_RATE)}
-                        </span>
-                        {product.originalPrice && (
-                            <span className="text-sm text-zinc-400 line-through">
-                                {formatCurrency(product.originalPrice * INR_CONVERSION_RATE)}
-                            </span>
-                        )}
-                        {discount > 0 && (
-                            <span className="ml-2 text-[11px] font-bold tracking-wide text-white bg-gradient-to-r from-rose-500 via-indigo-500 to-zinc-900 px-2.5 py-1 rounded-full">
-                                Best Price
-                            </span>
-                        )}
-                    </div>
-                </div>
-                <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full mt-7 py-3 rounded-lg font-bold text-base bg-gradient-to-r from-rose-500 via-indigo-500 to-zinc-900 text-white hover:from-zinc-900 hover:to-rose-500 transition-colors duration-200 shadow-lg"
-                >
-                    Add to Cart
-                </motion.button>
-            </div>
-        </motion.div>
-    );
+        <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <button className="flex items-center gap-2 text-white font-semibold py-2 px-4 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors">
+            <FiEye size={18} />
+            <span className="text-sm">Quick View</span>
+          </button>
+        </div>
+      </div>
+
+      {/* --- Details & Call-to-Action Area --- */}
+      <div className="p-6 flex flex-col flex-1">
+        <div className="flex-1">
+          <p className="text-xs text-zinc-500 uppercase tracking-wider mb-1">
+            {product.brand}
+          </p>
+          <h3 className="font-semibold text-zinc-800 text-lg leading-tight mb-3">
+            {product.name}
+          </h3>
+          <div className="flex items-baseline gap-2 mt-4">
+            <span className="text-2xl font-bold text-zinc-900">
+              {formatCurrency(product.price * INR_CONVERSION_RATE)}
+            </span>
+            {product.originalPrice && (
+              <span className="text-sm text-zinc-400 line-through">
+                {formatCurrency(product.originalPrice * INR_CONVERSION_RATE)}
+              </span>
+            )}
+            {discount > 0 && (
+              <span className="ml-2 text-[11px] font-bold tracking-wide text-white bg-gradient-to-r from-rose-500 via-indigo-500 to-zinc-900 px-2.5 py-1 rounded-full">
+                Best Price
+              </span>
+            )}
+          </div>
+        </div>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.98 }}
+          className="w-full mt-7 py-3 rounded-lg font-bold text-base bg-gradient-to-r from-rose-500 via-indigo-500 to-zinc-900 text-white hover:from-zinc-900 hover:to-rose-500 transition-colors duration-200 shadow-lg"
+        >
+          Add to Cart
+        </motion.button>
+      </div>
+    </motion.div>
+  );
 }
 
 // --- 5. PAGE HEADER & ACTIVE FILTERS (Modernized) ---
