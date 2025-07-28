@@ -3,15 +3,37 @@ import { FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
 import { Footer, NavBar } from '../../components';
+import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 const AdminLogin = () => {
-  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (event) => {
+  const [email,setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Handle form submission logic here
-    console.log('Form submitted');
-  };
+    try {
+        const response = await axios.post("http://localhost:5000/api/admin/admin-login/", {
+            email, password
+        });
+
+        console.log("Login Response:", response.data); // ✅ Check here
+
+        if (response.data.token) {
+          console.log(response.data.token);
+            localStorage.setItem("adminToken", response.data.token);
+            navigate("/luna-demo/admincontrol");
+        } else {
+            alert("Token not received from server");
+        }
+    } catch (error) {
+        console.error(error.response?.data?.message || error.message);
+        alert(error.response?.data?.message || "Login failed");
+    }
+};
 
   return (
     <>
@@ -33,6 +55,8 @@ const AdminLogin = () => {
               type="email"
               autoComplete="email"
               required
+              value={email}
+              onChange={(e)=> setEmail(e.target.value)}
               className="w-full py-3 pl-12 pr-4 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-300 ease-in-out"
               placeholder="Email address"
             />
@@ -47,6 +71,8 @@ const AdminLogin = () => {
               type={showPassword ? 'text' : 'password'}
               autoComplete="current-password"
               required
+              value= {password}
+              onChange = {(e)=> setPassword(e.target.value)}
               className="w-full py-3 pl-12 pr-12 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-300 ease-in-out"
               placeholder="Password"
             />

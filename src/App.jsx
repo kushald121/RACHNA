@@ -2,21 +2,20 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Helmet } from "react-helmet"; //browser tab and icon customization
 import Payment from "./pages/home/payment"
-import User1 from "./pages/sign-in/User1";
+import User1 from "./pages/user/User1.js";
 import AdminLogin from './pages/admin/AdminLogin.js';
 import Fav from '../src/pages/favorites/Fav.js';
 import AdminProductPages from './pages/product/AdminProductPages.js';
 import ProductOverview from './pages/product/ProductOverview.js';
+import AdminControl from "./pages/admin/adminControl.js";
+import ProtectedRoutes from "./pages/utils/ProtectedRoutes.js";
+import AddProduct from "./pages/admin/Addproduct.jsx";
+import SplashCursor from './components/cursor/SplashCursor.jsx'
 import AllProductsPage from './pages/product/AllProductsPage.js';
-import Accessibility from './pages/HelpPages/Accessibility.js';
-import ContactUs from './pages/HelpPages/ContactUs.js';
-import PrivacyPolicy from './pages/HelpPages/PrivacyPolicy.js';
-import TermsAndConditions from './pages/HelpPages/TermsAndConditions.js';
-import RefundPolicy from './pages/HelpPages/RefundPolicy.js';
-import ShippingAndDilevery from './pages/HelpPages/ShippingAndDilevery.js';
+
 
 // Core Function
-import { Home, Error, SignIn, NewArrivals } from './pages';
+import { Home, Error,  NewArrivals } from './pages';
 
 // Men Clothing
 import {
@@ -39,6 +38,7 @@ import {
 
 const App = () => {
   return (
+    
     <Router> {/* Move the Router component here */}
       <div className="App">
         {/*Website TAB Description*/}
@@ -48,6 +48,7 @@ const App = () => {
           <link rel="canonical" href="https://www.google.com/" />
           <meta name="description" content="© 2023 Luna Inc. All Rights Reserved." />
         </Helmet>
+         {/* //<SplashCursor/> */}
 
         <Routes>
           <Route exact path="/luna-demo/" element={<Home />} />
@@ -57,11 +58,12 @@ const App = () => {
 
 
           {/* Userlog */}
+       
 
-
-          {/* Other */}
+          {/* Admin */}
+       
           <Route path="/luna-demo/error/" element={<Error />} />
-          <Route path="/luna-demo/sign-in/" element={<SignIn />} />
+         
           <Route path="/luna-demo/new-arrivals/" element={<NewArrivals />} />
           <Route path="/luna-demo/admin-login/" element={<AdminLogin />} />
           <Route path="/luna-demo/favorites/" element={<Fav />} />
