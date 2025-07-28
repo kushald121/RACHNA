@@ -20,23 +20,29 @@ import AddProduct from "./pages/admin/Addproduct.jsx";
 import DeleteProduct from "./pages/admin/DeleteProduct.js";
 import UpdateProduct from "./pages/admin/UpdateProduct.js";
 import ViewOrder from "./pages/admin/ViewOrder.jsx";
-import SplashCursor from './components/cursor/SplashCursor.jsx'
+
 import AllProductsPage from './pages/product/AllProductsPage.jsx';
+
 
 // Core Function
 import { Home, Error,  NewArrivals } from './pages';
 
 // Men Clothing
-import { Men, MenClothing, MenAccesories, MenBrands,
-         Tops, Bottoms, Innerwear, Outerwear, Activewear,
-         Hats, Sunglasses, Belts, Wallets, BagsBackpacks } from './pages';
+import {
+  Men, MenClothing, MenAccesories, MenBrands,
+  Tops, Bottoms, Innerwear, Outerwear, Activewear,
+  Hats, Sunglasses, Belts, Wallets, BagsBackpacks
+} from './pages';
 
-import { Nike1, Nike2, Nike3, Nike4, Nike5,
-         Zara1, Zara2, Zara3, Zara4, Zara5,
-         TommyJohn1, TommyJohn2, TommyJohn3, TommyJohn4, TommyJohn5,
-         NorthFace1, NorthFace2, NorthFace3, NorthFace4, NorthFace5,
-         GymShark1, GymShark2, GymShark3, GymShark4, GymShark5,
-         Adidas1, Adidas2, Adidas3, Adidas4, Adidas5, } from './pages';
+import {
+  Nike1, Nike2, Nike3, Nike4, Nike5,
+  Zara1, Zara2, Zara3, Zara4, Zara5,
+  TommyJohn1, TommyJohn2, TommyJohn3, TommyJohn4, TommyJohn5,
+  NorthFace1, NorthFace2, NorthFace3, NorthFace4, NorthFace5,
+  GymShark1, GymShark2, GymShark3, GymShark4, GymShark5,
+  Adidas1, Adidas2, Adidas3, Adidas4, Adidas5,
+} from './pages';
+
 
 // Women Clothing
 
@@ -63,7 +69,7 @@ const App = () => {
           <Route path ="/Rachna/order-summary"  element={<OrderSummaryPage/>}/>
           <Route path ="/Rachna/checkout"  element={<PaymentPage/>}/>
           <Route path ="/Rachna/orders"  element={<OrdersPage/>}/>
-          
+
 
 
           {/* User Authentication */}
@@ -80,9 +86,7 @@ const App = () => {
        
 
           {/* Admin */}
-       
           <Route path="/Rachna/error/" element={<Error />} />
-
           <Route path="/Rachna/new-arrivals/" element={<NewArrivals />} />
           <Route path="/Rachna/admin-login/" element={<AdminLogin />} />
           <Route path="/Rachna/favorites/" element={<Fav />} />
@@ -92,8 +96,6 @@ const App = () => {
           <Route path="/Rachna/allproducts/" element={<AllProductsPage/>} />
           <Route path = "/Rachna/deleteproduct/" element={<DeleteProduct/>}/>
           <Route path = "/Rachna/updateproduct/" element={<UpdateProduct/>}/>
-          
-
 
           {/* Men Clothing */}
           <Route path="/Rachna/men/" element={<Men />} />
@@ -150,8 +152,7 @@ const App = () => {
           <Route path="/Rachna/men/accessories/hats/adidas5" element={<Adidas5 />} />
 
           {/* Women Clothing */}
-
-           <Route path="/Rachna/user1" element={<User1/>}/>
+          <Route path="/Rachna/user1" element={<User1/>}/>
 
         </Routes>
         </div>
