@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { NavBar, Footer } from '../../components';
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import gsap from "gsap";
 
 const AdminControl = () => {
@@ -14,7 +14,7 @@ const AdminControl = () => {
         const verifyAdmin = async () => {
             const token = localStorage.getItem("adminToken");
             if (!token) {
-                navigate("/luna-demo/admin-login/");
+                navigate("/Rachna/admin-login/");
                 return;
             }
 
@@ -28,11 +28,11 @@ const AdminControl = () => {
                 if (response.status === 200) {
                     setAuthorized(true);
                 } else {
-                    navigate("/luna-demo/admin-login/");
+                    navigate("/Rachna/admin-login/");
                 }
             } catch (error) {
                 console.error("Unauthorized:", error?.response?.data?.message);
-                navigate("/luna-demo/admin-login/");
+                navigate("/Rachna/admin-login/");
             } finally {
                 setLoading(false);
             }
@@ -60,25 +60,25 @@ const AdminControl = () => {
                 <h1 className="text-4xl font-bold text-center mb-10">Admin Dashboard</h1>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div className="bg-white rounded-xl shadow-md p-6 hover:scale-105 transform transition duration-300 cursor-pointer">
+                    <Link to="/Rachna/addproduct" className="bg-white rounded-xl shadow-md p-6 hover:scale-105 transform transition duration-300 cursor-pointer">
                         <h2 className="text-2xl font-semibold text-center mb-4">Add Product</h2>
                         <p className="text-center text-gray-600">Add new t-shirts to your store.</p>
-                    </div>
+                    </Link>
 
-                    <div className="bg-white rounded-xl shadow-md p-6 hover:scale-105 transform transition duration-300 cursor-pointer">
+                    <Link to="/Rachna/updateproduct" className="bg-white rounded-xl shadow-md p-6 hover:scale-105 transform transition duration-300 cursor-pointer">
                         <h2 className="text-2xl font-semibold text-center mb-4">Update Product</h2>
                         <p className="text-center text-gray-600">Update product details and pricing.</p>
-                    </div>
+                    </Link>
 
-                    <div className="bg-white rounded-xl shadow-md p-6 hover:scale-105 transform transition duration-300 cursor-pointer">
+                    <Link to="/Rachna/deleteproduct" className="bg-white rounded-xl shadow-md p-6 hover:scale-105 transform transition duration-300 cursor-pointer">
                         <h2 className="text-2xl font-semibold text-center mb-4">Delete Product</h2>
                         <p className="text-center text-gray-600">Remove products from your catalog.</p>
-                    </div>
+                    </Link>
 
-                    <div className="bg-white rounded-xl shadow-md p-6 hover:scale-105 transform transition duration-300 cursor-pointer">
+                    <Link to="/Rachna/vieworders" className="bg-white rounded-xl shadow-md p-6 hover:scale-105 transform transition duration-300 cursor-pointer">
                         <h2 className="text-2xl font-semibold text-center mb-4">View Orders</h2>
                         <p className="text-center text-gray-600">See all received orders and status.</p>
-                    </div>
+                    </Link>
                 </div>
             </div>
             <Footer />

@@ -30,9 +30,9 @@ const storage = multer.diskStorage({
     }
 });
 
-// 20MB max for video uploads
+// 80MB max for video uploads
 export const upload = multer({
     storage,
     fileFilter,
-    limits: { fileSize: 80 * 1024 * 1024 } // 20 MB limit
+    limits: { fileSize: 80 * 1024 * 1024 } // 80 MB limit
 });

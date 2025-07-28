@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
-import { FcGoogle } from 'react-icons/fc';
-import { FaGithub } from 'react-icons/fa';
 import { Footer, NavBar } from '../../components';
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
@@ -25,7 +23,7 @@ const AdminLogin = () => {
         if (response.data.token) {
           console.log(response.data.token);
             localStorage.setItem("adminToken", response.data.token);
-            navigate("/luna-demo/admincontrol");
+            navigate("/Rachna/admincontrol");
         } else {
             alert("Token not received from server");
         }
@@ -110,30 +108,7 @@ const AdminLogin = () => {
           </div>
         </form>
         
-        {/* Separator */}
-        <div className="relative flex items-center py-2">
-          <div className="flex-grow border-t border-gray-300"></div>
-          <span className="flex-shrink mx-4 text-sm text-gray-400">Or continue with</span>
-          <div className="flex-grow border-t border-gray-300"></div>
-        </div>
 
-        {/* Social Logins */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <button
-            type="button"
-            className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
-            <FcGoogle className="w-5 h-5 mr-2" />
-            Google
-          </button>
-          <button
-            type="button"
-            className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
-            <FaGithub className="w-5 h-5 mr-2" />
-            GitHub
-          </button>
-        </div>
       </div>
     </div>
     <Footer />

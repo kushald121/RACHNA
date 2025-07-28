@@ -254,7 +254,7 @@ const ProductOverview = () => {
                   {Math.round(((product.price - product.offerPrice) / product.price) * 100)}% OFF
                 </span>
               </div>
-              <div className="text-sm text-gray-500 mb-2 italic">(inclusive of all taxes)</div>
+
               <div className="mb-6">
                 <span className="inline-flex items-center px-2 py-0.5 bg-indigo-100 text-xs font-medium text-indigo-700 rounded shadow-sm">
                   <svg className="inline w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">

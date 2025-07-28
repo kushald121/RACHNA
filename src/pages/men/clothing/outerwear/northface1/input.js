@@ -17,9 +17,9 @@
         
         // Product Breadcrumbs
         breadcrumbs: [
-            { id: 1, name: 'Men', to: '/luna-demo/men' },
-            { id: 2, name: 'Clothing', to:'/luna-demo/men/clothing'},
-            { id: 3, name: 'Outerwear', to: '/luna-demo/men/clothing/outerwear' },
+            { id: 1, name: 'Men', to: '/Rachna/men' },
+            { id: 2, name: 'Clothing', to:'/Rachna/men/clothing'},
+            { id: 3, name: 'Outerwear', to: '/Rachna/men/clothing/outerwear' },
         ],
 
         //Product Images

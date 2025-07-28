@@ -11,6 +11,21 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Generic email sending function
+export const sendEmail = async (to, subject, html) => {
+  try {
+    await transporter.sendMail({
+      from: process.env.SMTP_EMAIL,
+      to,
+      subject,
+      html,
+    });
+  } catch (err) {
+    console.error("Failed to send email:", err);
+    throw err;
+  }
+};
+
 export const sendOtpEmail = async (to, user, otp) => {
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; width: 100%; margin: auto; border: 1px solid #eee; padding: 20px; box-sizing: border-box;">
@@ -37,14 +52,9 @@ export const sendOtpEmail = async (to, user, otp) => {
     
 
   try {
-    await transporter.sendMail({
-      from: process.env.SMTP_EMAIL,
-      to,
-      subject: "Your OTP for RACHNA Signup",
-      html,
-    });
+    await sendEmail(to, "Your OTP for RACHNA Signup", html);
   } catch (err) {
-    console.error("Failed to send email:", err);
+    console.error("Failed to send OTP email:", err);
     throw err;
   }
 };

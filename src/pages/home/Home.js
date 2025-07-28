@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Banner, Brands, Footer, Header, NavBar, Previews } from '../../components';
+import { Banner, Brands, Footer, Header, NavBar, Previews, ProductsContent } from '../../components';
 
 const Home = () => {
   // Toggle between banner states
@@ -12,6 +12,7 @@ const Home = () => {
         <NavBar />
         <Header />
         <Previews />
+        <ProductsContent />
         <Brands />
         <Footer />
     </div>

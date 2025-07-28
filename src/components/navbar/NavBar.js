@@ -1,110 +1,130 @@
-import { Fragment, useState } from "react";
-import { Dialog, Popover, Tab, Transition } from "@headlessui/react";
-import { Bars3Icon, MagnifyingGlassIcon, ShoppingBagIcon, XMarkIcon } from "@heroicons/react/24/outline";
-
-import { ShoppingCart } from "../../components";
+import { Fragment, useState, useEffect } from "react";
+import { Dialog, Transition, Menu } from "@headlessui/react";
+import {
+  Bars3Icon,
+  MagnifyingGlassIcon,
+  XMarkIcon,
+  UserIcon,
+  HeartIcon,
+  ShoppingBagIcon
+} from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import 'flag-icons/css/flag-icons.min.css';
-import { HeartIcon } from "@heroicons/react/20/solid";
+import ShoppingCart from "../shopping-cart/ShoppingCart";
+import { useAuth } from "../../contexts/AuthContext";
+import { getCart, getFavorites } from "../../utils/cartUtils";
 
-
-// TEXT INPUT CHANGE HERE ONLY
+// Navigation configuration
 const navigation = {
-  categories: [
-
-    
-    // MEN SECTION
-    {
-      id: "men",
-      name: "Men",
-      featured: [
-        {
-          name: "New Arrivals",
-          href: "/luna-demo/new-arrivals/",
-          imageSrc: "https://img.freepik.com/free-photo/handsome-man-autumn-setting_23-2149056580.jpg?w=740&t=st=1687738996~exp=1687739596~hmac=dfc9d6070d96915d23039569bd9e2e9d717e1ff6f9236f7dcf94307a630450af",
-          imageAlt: "new arrivals - men",
-        },
-        {
-          name: "Featured",
-          href: "/luna-demo/men/",
-          imageSrc: "https://img.freepik.com/premium-photo/shirt-mockup-concept-with-plain-clothing_23-2149448789.jpg?w=740",
-          imageAlt: "mens collection",
-        },
-      ],
-
-      sections: [
-        // Men's Clothing
-        {
-          id: "clothing",
-          name: "Clothing",
-          href: "/luna-demo/men/clothing/",
-          items: [
-          
-          ],
-        },
-
-        ],
-    },
-  ],
-
-  // Additional NavBar Pages
   pages: [
-    { name: "About Us", href: "/luna-demo/error/" },
-    { name: "Admin", href: "/luna-demo/admin-login/" },
+    { name: "COLLECTIONS", href: "/Rachna/allproducts/" },
+    { name: "ABOUT US", href: "/Rachna/error/" },
+    { name: "ADMIN", href: "/Rachna/admin-login/" },
   ],
 };
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+
 
 const NavBar = () => {
-  // Condition state for dropdown menu
+  // State management
   const [open, setOpen] = useState(false);
-
-  // Condition state for shopping-cart menu
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+  const [favoritesCount, setFavoritesCount] = useState(0);
 
-  // Logic statement for handling shopping-cart menu
-  const handleCartClick = () => {
-    setIsCartOpen(!isCartOpen);
-  };
+  // Auth context
+  const { user, logout, getCurrentSessionId, getSessionType, getAuthHeaders } = useAuth();
 
-  // stagger motion animation
-  const containerMotion1 = {
-    visible: { transition: { staggerChildren: 0.1 } },
-  };
-
-  // stagger motion animation
-  const containerMotion2 = {
-    visible: { transition: { staggerChildren: 0.15 } },
-  };
-
-  // animation parameters for TEXT
+  // Animation variants
   const textMotion = {
-    // movement = FADE-IN
-    hidden: { opacity: 0 }, // INITIAL STAGE
-    visible: { opacity: 1, transition: { duration: 0.2, ease: "easeInOut" } }, // ANIMATION STAGE
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeInOut" } },
   };
 
-  // animation parameters for TEXT
-  const menuMotion = {
-    // movement = FADE-IN
-    hidden: { opacity: 0, y: -10 }, // INITIAL STAGE
+  const containerMotion1 = {
+    hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      y: 0,
-      transition: { duration: 0.3, ease: "easeInOut" },
-    }, // ANIMATION STAGE
+      transition: { duration: 0.8, ease: "easeInOut", staggerChildren: 0.1 },
+    },
   };
+
+  // Fetch cart count
+  const fetchCartCount = async () => {
+    try {
+      const authContext = { getCurrentSessionId, getSessionType, getAuthHeaders };
+      const result = await getCart(authContext);
+
+      if (result.success && result.cart.items) {
+        const totalQuantity = result.cart.items.reduce((total, item) => {
+          return total + (item.quantity || 0);
+        }, 0);
+        setCartCount(totalQuantity);
+      } else {
+        setCartCount(0);
+      }
+    } catch (error) {
+      console.error('Error fetching cart count:', error);
+      setCartCount(0);
+    }
+  };
+
+  // Fetch favorites count
+  const fetchFavoritesCount = async () => {
+    try {
+      const authContext = { getCurrentSessionId, getSessionType, getAuthHeaders };
+      const result = await getFavorites(authContext);
+
+      if (result.success && result.favorites) {
+        setFavoritesCount(result.favorites.length);
+      }
+    } catch (error) {
+      console.error('Error fetching favorites count:', error);
+    }
+  };
+
+  // Effects
+  useEffect(() => {
+    fetchCartCount();
+    fetchFavoritesCount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchCartCount();
+      fetchFavoritesCount();
+    }, 30000);
+
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  // Cart click handler
+  const handleCartClick = () => {
+    setIsCartOpen(!isCartOpen);
+    fetchCartCount();
+  };
+
+  // Refresh function for global access
+  const refreshCounts = () => {
+    fetchCartCount();
+    fetchFavoritesCount();
+  };
+
+  useEffect(() => {
+    window.refreshNavbarCounts = refreshCounts;
+    return () => {
+      delete window.refreshNavbarCounts;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="bg-white">
       {/* MOBILE MENU */}
       <Transition.Root show={open} as={Fragment}>
-        <Dialog as="div" className="relative z-100 lg:hidden" onClose={setOpen}>
-          {/* Fade-In Animation -> Main Screen */}
+        <Dialog as="div" className="relative z-40 lg:hidden" onClose={setOpen}>
           <Transition.Child
             as={Fragment}
             enter="transition-opacity ease-linear duration-300"
@@ -114,12 +134,10 @@ const NavBar = () => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black bg-opacity-75" />
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
           </Transition.Child>
 
-          {/* SideBar Menu */}
-          <div className="fixed inset-0 z-100 flex">
-            {/* Slide-In Animation - SideBar Only */}
+          <div className="fixed inset-0 z-40 flex">
             <Transition.Child
               as={Fragment}
               enter="transition ease-in-out duration-300 transform"
@@ -130,185 +148,127 @@ const NavBar = () => {
               leaveTo="-translate-x-full"
             >
               <Dialog.Panel className="relative flex w-full max-w-xs flex-col overflow-y-auto bg-white pb-12 shadow-xl">
-                {/* Close SideBar Button */}
-                <motion.div
-                  className="flex px-4 pb-2 pt-5"
-                  variants={textMotion}
-                >
+                <div className="flex items-center justify-between px-4 pb-2 pt-5">
+                  <Link to="/Rachna/" onClick={() => setOpen(false)}>
+                    <h1 className="h-8 w-auto font-bold font-amperserif text-[#E50010] text-xl">RACHNA</h1>
+                  </Link>
                   <button
                     type="button"
-                    className="-m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:text-indigo-600"
+                    className="-m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400"
                     onClick={() => setOpen(false)}
                   >
                     <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
-                </motion.div>
+                </div>
 
-                {/* Links */}
-                <Tab.Group as="div" className="mt-2">
-                  {/* WOMEN & MEN TABS */}
-                  <motion.div className="border-b border-gray-200"
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.2 }}
-                    variants={menuMotion}
-                    >
-                    <motion.span variants={textMotion}>
-                      <Tab.List className="-mb-px flex space-x-8 px-4">
-                        {navigation.categories.map((category) => (
-                          <Tab
-                            key={category.name}
-                            className={({ selected }) =>
-                              classNames(
-                                selected ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-900 hover:text-indigo-600',
-                                'flex-1 whitespace-nowrap border-b-2 px-1 py-4 text-base font-medium'
-                              )
-                            }
-                          >
-                            {category.name}
-                          </Tab>
-                        ))}
-                      </Tab.List>
-                    </motion.span>
-                  </motion.div>
+                {/* Mobile Search Bar */}
+                <div className="border-t border-gray-200 px-4 py-6">
+                  <div className="relative">
+                    <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search for products, collections and more"
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                    />
+                  </div>
+                </div>
 
-                  {/* FEATURED COLLECTIONS + LINK LISTS */}
-                  <Tab.Panels as={Fragment}>
-                    {navigation.categories.map((category) => (
-                      <Tab.Panel key={category.name} className="space-y-10 px-4 pb-8 pt-10">
-                        {/* Featured Collections -> IMAGES */}
-                        <motion.div className="grid grid-cols-2 gap-x-4"
-                          initial="hidden"
-                          whileInView="visible"
-                          viewport={{ once: true, amount: 0.2 }}
-                          variants={containerMotion2}
-                          >
-                          {category.featured.map((item) => (
-                            <motion.div key={item.name} className="group relative text-sm" variants={menuMotion}>
-                              {/* Featured Image */}
-                              <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-xl bg-gray-100 group-hover:opacity-75">
-                                <img src={item.imageSrc} alt={item.imageAlt} className="object-cover object-center" />
-                              </div>
-                              {/* Featured Title */}
-                              <Link to={item.href} className="mt-6 block font-semibold text-gray-900 hover:text-indigo-600">
-                                <span className="absolute inset-0 z-10"/>
-                                {item.name}
-                              </Link>
-                              {/* Featured Subtitle */}
-                              <p className="mt-1 text-gray-600 group-hover:text-gray-500">
-                                Shop now
-                              </p>
-                            </motion.div>
-                          ))}
-                        </motion.div>
-
-                        {/* LINK Lists -> TEXT */}
-                        {category.sections.map((section) => (
-                          <motion.div key={section.name}
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true, amount: 0.1 }}
-                            variants={containerMotion2}
-                            >
-                            {/* List Header */}
-                            <Link to={section.href}>
-                              <motion.p id={`${category.id}-${section.id}-heading-mobile`}
-                                className="text-lg font-medium text-gray-900"
-                                variants={menuMotion}>
-                                  {section.name}
-                              </motion.p>
-                            </Link>
-                            
-                            {/* List Options */}
-                            <motion.span variants={menuMotion}>
-                              <ul
-                                aria-labelledby={`${category.id}-${section.id}-heading-mobile`}
-                                className="mt-3 flex flex-col space-y-5"
-                              >
-                                {section.items.map((item) => (
-                                    <li key={item.name} className="flow-root">
-                                      <Link to={item.href} className="-m-2 block p-2 text-gray-500 hover:text-indigo-600">
-                                        {item.name}
-                                      </Link>
-                                    </li>
-                                ))}
-                              </ul>
-                              </motion.span>
-                          </motion.div>
-                        ))}
-                      </Tab.Panel>
-                    ))}
-                  </Tab.Panels>
-
-                </Tab.Group>
-
-                {/* Company and Store */}
-                <motion.div
-                  className="space-y-6 border-t border-gray-200 px-4 py-6"
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.2 }}
-                  variants={menuMotion}
-                >
+                {/* Mobile Navigation Links */}
+                <div className="space-y-6 border-t border-gray-200 px-4 py-6">
                   {navigation.pages.map((page) => (
                     <div key={page.name} className="flow-root">
                       <Link
                         to={page.href}
-                        className="-m-2 block p-2 font-medium text-gray-900 hover:text-indigo-600"
+                        className="-m-2 block p-2 font-bold text-gray-900 hover:text-indigo-600 uppercase tracking-wide"
+                        onClick={() => setOpen(false)}
                       >
                         {page.name}
                       </Link>
                     </div>
                   ))}
-                </motion.div>
+                </div>
 
-                {/* Sign In + Create Account */}
-                <motion.div
-                  className="space-y-6 border-t border-gray-200 px-4 py-6"
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.2 }}
-                  variants={menuMotion}
-                >
-                  <Link
-                    to="/luna-demo/sign-in/"
-                    className="-m-2 block p-2 font-medium text-gray-900 hover:text-indigo-600"
-                  >
-                    Sign In / Create Account
-                  </Link>
-                </motion.div>
+                {/* Mobile User Section */}
+                <div className="border-t border-gray-200 px-4 py-6">
+                  {/* Mobile Cart and Wishlist */}
+                  <div className="flex items-center justify-around mb-6 pb-6 border-b border-gray-200">
+                    <button
+                      onClick={() => {
+                        setOpen(false);
+                        setIsCartOpen(true);
+                      }}
+                      className="flex flex-col items-center text-gray-700 hover:text-indigo-600 relative"
+                    >
+                      <ShoppingBagIcon className="h-6 w-6" />
+                      <span className="text-xs font-bold uppercase mt-1">BAG</span>
+                      {cartCount > 0 && (
+                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center min-w-[16px]">
+                          {cartCount > 99 ? '99+' : cartCount}
+                        </span>
+                      )}
+                    </button>
+                    <Link
+                      to="/Rachna/favorites/"
+                      onClick={() => setOpen(false)}
+                      className="flex flex-col items-center text-gray-700 hover:text-indigo-600 relative"
+                    >
+                      <HeartIcon className="h-6 w-6" />
+                      <span className="text-xs font-bold uppercase mt-1">WISHLIST</span>
+                      {favoritesCount > 0 && (
+                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center min-w-[16px]">
+                          {favoritesCount > 99 ? '99+' : favoritesCount}
+                        </span>
+                      )}
+                    </Link>
+                  </div>
 
-                {/* Currency Setting */}
-                <motion.div
-                  className="border-t border-gray-200 px-4 py-6"
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 1 }}
-                  variants={menuMotion}
-                >
-                  {/* American Dollar -> Default Currencey */}
-                  <Link
-                    to="/luna-demo/error/"
-                    className="flex items-center text-gray-700 hover:text-gray-800"
-                  >
-                      <span class="fi fi-in"></span>
-                      <span className="ml-3 block text-sm font-medium hover:text-indigo-600 hover:font-semibold">
-                      IND
-                    </span>
-                  </Link>
-                </motion.div>
+                  {user ? (
+                    <div className="space-y-6">
+                      <Link
+                        to="/Rachna/orders"
+                        className="-m-2 block p-2 font-medium text-gray-900 hover:text-indigo-600"
+                        onClick={() => setOpen(false)}
+                      >
+                        My Orders
+                      </Link>
+                      <Link
+                        to="/Rachna/profile"
+                        className="-m-2 block p-2 font-medium text-gray-900 hover:text-indigo-600"
+                        onClick={() => setOpen(false)}
+                      >
+                        Profile Settings
+                      </Link>
+                      <button
+                        onClick={() => {
+                          logout();
+                          setOpen(false);
+                        }}
+                        className="-m-2 block p-2 font-medium text-gray-900 hover:text-indigo-600 text-left w-full"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-6">
+                      <Link
+                        to="/Rachna/user-login/"
+                        className="-m-2 block p-2 font-medium text-gray-900 hover:text-indigo-600"
+                        onClick={() => setOpen(false)}
+                      >
+                        Sign In
+                      </Link>
+                    </div>
+                  )}
+                </div>
               </Dialog.Panel>
             </Transition.Child>
           </div>
         </Dialog>
       </Transition.Root>
 
-      {/* DESKTOP MENU */}
-      <header className="relative bg-white">
-        <nav
-          aria-label="Top"
-          className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
-        >
+      {/* DESKTOP MENU - MYNTRA STYLE */}
+      <header className="relative bg-white shadow-sm">
+        <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div
             className="border-b border-gray-200"
             initial="hidden"
@@ -316,279 +276,163 @@ const NavBar = () => {
             viewport={{ once: true, amount: 0.2 }}
             variants={containerMotion1}
           >
-            <div className="flex h-16 items-center">
-              {/* MOBILE BUTTON -> Hidden in Desktop View */}
-              <motion.button
-                variants={textMotion}
-                type="button"
-                className="rounded-md bg-white p-2 text-gray-400 hover:text-indigo-600 lg:hidden"
-                onClick={() => setOpen(true)}
-              >
-                <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-              </motion.button>
+            <div className="flex h-16 lg:h-20 items-center justify-between">
+              {/* LEFT SECTION: Mobile Menu + Logo + Navigation */}
+              <div className="flex items-center">
+                {/* Mobile Menu Button */}
+                <motion.button
+                  variants={textMotion}
+                  type="button"
+                  className="rounded-md bg-white p-2 text-gray-400 hover:text-indigo-600 lg:hidden mr-2"
+                  onClick={() => setOpen(true)}
+                >
+                  <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+                </motion.button>
 
-              {/* COMPANY LOGO */}
-              <motion.div className="ml-4 flex lg:ml-0" variants={textMotion}>
-                <Link to="/luna-demo/">
-                  <h1 class="h-8 w-auto  font-bold font-amperserif text-[#E50010] text-2xl ">RACHNA</h1>
-                </Link>
-              </motion.div>
+                {/* Logo */}
+                <motion.div className="flex" variants={textMotion}>
+                  <Link to="/Rachna/">
+                    <h1 className="h-8 w-auto font-bold font-amperserif text-[#E50010] text-2xl lg:text-3xl">RACHNA</h1>
+                  </Link>
+                </motion.div>
 
-              {/* CATEGORY HEADINGS */}
-              <Popover.Group className="hidden lg:ml-8 lg:block lg:self-stretch">
-                <div className="flex h-full space-x-8 items-center justify-center">
-                  {/* Women + Men */}
-                  {navigation.categories.map((category) => (
-                    <Popover key={category.name} className="flex">
+                {/* Desktop Navigation Links */}
+                <div className="hidden lg:flex lg:ml-12 lg:space-x-8">
+                  {navigation.pages.map((page) => (
+                    <motion.div key={page.name} variants={textMotion}>
+                      <Link
+                        to={page.href}
+                        className="text-sm font-bold text-gray-700 hover:text-indigo-600 transition-colors duration-200 uppercase tracking-wide"
+                      >
+                        {page.name}
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              {/* CENTER SECTION: Search Bar */}
+              <div className="flex-1 max-w-lg mx-4 lg:mx-8">
+                <motion.div className="hidden lg:flex relative w-full" variants={textMotion}>
+                  <div className="relative w-full">
+                    <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search for products, collections and more"
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                    />
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* RIGHT SECTION: India Flag + Profile + Wishlist + Bag */}
+              <div className="flex items-center space-x-6">
+                {/* India Flag */}
+                <motion.div className="hidden lg:flex items-center" variants={textMotion}>
+                  <span className="text-lg">🇮🇳</span>
+                </motion.div>
+
+                {/* Profile */}
+                <motion.div className="flex flex-col items-center group cursor-pointer" variants={textMotion}>
+                  {user ? (
+                    <Menu as="div" className="relative">
                       {({ open }) => (
                         <>
-                          {/* Category Heading Animations + Name */}
-                          <motion.div
-                            className="relative flex"
-                            variants={textMotion}
-                          >
-                            <Popover.Button
-                              className={classNames(
-                                open
-                                  ? "border-indigo-600 text-indigo-600"
-                                  : "border-transparent text-gray-800 hover:text-indigo-600",
-                                "relative z-100 -mb-px flex items-center border-b-2 pt-px text-sm font-medium transition-colors duration-200 ease-out"
-                              )}
-                            >
-                              {category.name}
-                            </Popover.Button>
-                          </motion.div>
-
-                          {/* Category Dropdown Animation */}
+                          <Menu.Button className="flex flex-col items-center text-gray-700 hover:text-indigo-600 transition-colors">
+                            <UserIcon className="h-6 w-6" />
+                            <span className="text-xs font-bold uppercase mt-1 hidden lg:block">PROFILE</span>
+                          </Menu.Button>
                           <Transition
                             as={Fragment}
-                            enter="transition ease-out duration-200"
-                            enterFrom="opacity-0"
-                            enterTo="opacity-100"
-                            leave="transition ease-in duration-150"
-                            leaveFrom="opacity-100"
-                            leaveTo="opacity-0"
+                            show={open}
+                            enter="transition ease-out duration-100"
+                            enterFrom="transform opacity-0 scale-95"
+                            enterTo="transform opacity-100 scale-100"
+                            leave="transition ease-in duration-75"
+                            leaveFrom="transform opacity-100 scale-100"
+                            leaveTo="transform opacity-0 scale-95"
                           >
-                            {/* Dropdown Menu Appearance */}
-                            <Popover.Panel className="absolute inset-x-0 top-full text-sm text-gray-500">
-                              <div
-                                className="absolute inset-0 top-1/2 bg-white shadow"
-                                aria-hidden="true"
-                              />
-
-                              <div className="z-50 relative bg-white">
-                                <div className="mx-auto max-w-7xl px-8">
-                                  <motion.div
-                                    className="grid grid-cols-2 gap-x-8 gap-y-10 py-10"
-                                    initial="hidden"
-                                    whileInView="visible"
-                                    viewport={{ once: true, amount: 0.2 }}
-                                    variants={containerMotion2}
+                            <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <Link
+                                    to="/Rachna/orders"
+                                    className={`${
+                                      active ? 'bg-gray-100' : ''
+                                    } block px-4 py-2 text-sm text-gray-700`}
                                   >
-                                    {/* CATEGORY LISTING -> Text Format */}
-                                    <div className="row-start-1 grid grid-cols-3 gap-x-8 gap-y-10 text-sm">
-                                      {category.sections.map((section) => (
-                                        <motion.div
-                                          key={section.name}
-                                          variants={menuMotion}
-                                        >
-                                          {/* Category Title */}
-                                          <Link to={section.href}>
-                                            <p
-                                              id={`${section.name}-heading`}
-                                              className="font-medium text-gray-900"
-                                            >
-                                              {section.name}
-                                            </p>
-                                          </Link>
-
-                                          {/* Category Listing*/}
-                                          <ul
-                                            aria-labelledby={`${section.name}-heading`}
-                                            className="mt-6 space-y-6 sm:mt-4 sm:space-y-4"
-                                          >
-                                            {section.items.map((item) => (
-                                              <li
-                                                key={item.name}
-                                                className="flex"
-                                              >
-                                                <a
-                                                  href={item.href}
-                                                  className="hover:text-indigo-600"
-                                                >
-                                                  {item.name}
-                                                </a>
-                                              </li>
-                                            ))}
-                                          </ul>
-                                        </motion.div>
-                                      ))}
-                                    </div>
-
-                                    {/* FEATURED COLLECTIONS -> Image Format */}
-                                    <div className="col-start-2 grid grid-cols-2 gap-x-8">
-                                      {category.featured.map((item) => (
-                                        <motion.div
-                                          key={item.name}
-                                          className="group relative text-base sm:text-sm"
-                                          variants={menuMotion}
-                                        >
-                                          {/* Image Panel */}
-                                          <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg group-hover:opacity-75">
-                                            <img
-                                              src={item.imageSrc}
-                                              alt={item.imageAlt}
-                                              className="object-cover object-center"
-                                            />
-                                          </div>
-
-                                          {/* Main Text */}
-                                          <Link
-                                            to={item.href}
-                                            className="mt-6 block font-medium text-gray-900 hover:text-indigo-600"
-                                          >
-                                            <span
-                                              className="absolute inset-0 z-100"
-                                              aria-hidden="true"
-                                            />
-                                            {item.name}
-                                          </Link>
-
-                                          {/* Subtitle */}
-                                          <p
-                                            aria-hidden="true"
-                                            className="mt-1"
-                                          >
-                                            Shop now
-                                          </p>
-                                        </motion.div>
-                                      ))}
-                                    </div>
-                                  </motion.div>
-                                </div>
-                              </div>
-                            </Popover.Panel>
+                                    My Orders
+                                  </Link>
+                                )}
+                              </Menu.Item>
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <Link
+                                    to="/Rachna/profile"
+                                    className={`${
+                                      active ? 'bg-gray-100' : ''
+                                    } block px-4 py-2 text-sm text-gray-700`}
+                                  >
+                                    Profile Settings
+                                  </Link>
+                                )}
+                              </Menu.Item>
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    onClick={logout}
+                                    className={`${
+                                      active ? 'bg-gray-100' : ''
+                                    } block w-full text-left px-4 py-2 text-sm text-gray-700`}
+                                  >
+                                    Sign Out
+                                  </button>
+                                )}
+                              </Menu.Item>
+                            </Menu.Items>
                           </Transition>
                         </>
                       )}
-                    </Popover>
-                  ))}
-
-                  {/* About Us + Admin */}
-         {navigation.pages.map((page) => (
-        <motion.span key={page.name} variants={textMotion}>
-         <Link
-         to={page.href}
-         className="flex items-center text-sm font-medium text-gray-800 hover:text-indigo-600"
-         >
-        {page.name}
-        </Link>
-        </motion.span>
-         ))}
-        </div>
-         </Popover.Group>
-
-              {/* Navbar Additional Features */}
-              <div className="ml-auto flex items-center">
-                {/* Sign In + Create Account */}
-                <motion.div
-                  className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6"
-                  variants={textMotion}
-                >
-                  <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-3">
-                    {/* Sign In Button */}
-                    <Link to="/luna-demo/sign-in/">
-                      {/* HOME ICON*/}
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-6 h-6 text-gray-400 hover:text-indigo-600"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
-                        />
-                      </svg>
+                    </Menu>
+                  ) : (
+                    <Link to="/Rachna/user-login/" className="flex flex-col items-center text-gray-700 hover:text-indigo-600 transition-colors">
+                      <UserIcon className="h-6 w-6" />
+                      <span className="text-xs font-bold uppercase mt-1 hidden lg:block">PROFILE</span>
                     </Link>
-
-                    {/* Separation Bar */}
-                    <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
-
-                    {/* Create Account Button */}
-                    <Link
-                      to="/luna-demo/error/"
-                      className="text-sm font-medium text-gray-800 hover:text-indigo-600"
-                    >
-                      Create Account
-                    </Link>
-                  </div>
+                  )}
                 </motion.div>
 
-                {/* Currency Setting*/}
-                <motion.div
-                  className="hidden lg:ml-6 lg:flex"
-                  variants={textMotion}
-                >
+                {/* Wishlist */}
+                <motion.div className="flex flex-col items-center cursor-pointer" variants={textMotion}>
                   <Link
-                    to="/luna-demo/error/"
-                    className="flex items-center text-gray-800 hover:text-indigo-600"
+                    to="/Rachna/favorites/"
+                    className="flex flex-col items-center text-gray-700 hover:text-indigo-600 transition-colors relative"
                   >
-                    {/* American Dollar -> Default Currencey */}
-                     <span class="fi fi-in"></span>
-                     <span className="ml-3 block text-sm font-medium hover:font-semibold">
-                      IND
-                    </span>
+                    <HeartIcon className="h-6 w-6" />
+                    <span className="text-xs font-bold uppercase mt-1 hidden lg:block">WISHLIST</span>
+                    {favoritesCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center min-w-[16px] z-10">
+                        {favoritesCount > 99 ? '99+' : favoritesCount}
+                      </span>
+                    )}
                   </Link>
                 </motion.div>
 
-                {/* Search Icon */}
-                <motion.div className="flex lg:ml-6" variants={textMotion}>
-                  <Link
-                    to="/luna-demo/error/"
-                    className="p-2 text-gray-400 hover:text-indigo-600"
-                  >
-                    <MagnifyingGlassIcon
-                      className="h-6 w-6"
-                      aria-hidden="true"
-                    />
-                  </Link>
-                </motion.div>
-
-                {/* Favorites */}
-                <motion.div className="flex lg:ml-6" variants={textMotion}>
-                  <Link
-                    to="/luna-demo/favorites/"
-                    className="p-2 text-gray-400 hover:text-red-500"
-                  >
-                    <HeartIcon className="h-6 w-6" aria-hidden="true" />
-                  </Link>
-                </motion.div>
-
-                {/* Shopping Cart */}
-                <motion.div
-                  className="ml-4 flow-root lg:ml-6"
-                  variants={textMotion}
-                >
+                {/* Bag */}
+                <motion.div className="flex flex-col items-center cursor-pointer" variants={textMotion}>
                   <div
                     onClick={handleCartClick}
-                    className="group -m-2 flex items-center p-2"
+                    className="flex flex-col items-center text-gray-700 hover:text-indigo-600 transition-colors relative"
                   >
-                    {/* Cart Icon */}
-                    <ShoppingBagIcon
-                      className="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-indigo-600"
-                      aria-hidden="true"
-                    />
-
-                    {/* # of Products Selected */}
-                    <span className="ml-2 text-sm font-medium text-gray-700">
-                      0
-                    </span>
+                    <ShoppingBagIcon className="h-6 w-6" />
+                    <span className="text-xs font-bold uppercase mt-1 hidden lg:block">BAG</span>
+                    {cartCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center min-w-[16px] z-10">
+                        {cartCount > 99 ? '99+' : cartCount}
+                      </span>
+                    )}
                   </div>
-                  {isCartOpen && <ShoppingCart variants={textMotion} />}
+                  <ShoppingCart open={isCartOpen} setOpen={setIsCartOpen} />
                 </motion.div>
               </div>
             </div>

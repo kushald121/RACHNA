@@ -13,13 +13,13 @@
         // General Information about the product
         name: 'Apollo Mid-Length Boxer Brief 6"',
         price: '$40',
-        to: '/luna-demomen/clothing/tommyjohn2/TommyJohn2',
-        
+        to: '/Rachna/men/clothing/tommyjohn2/TommyJohn2',
+
         // Product Breadcrumbs
         breadcrumbs: [
-            { id: 1, name: 'Men', to: '/luna-demo/men' },
-            { id: 2, name: 'Clothing', to:'/luna-demo/men/clothing'},
-            { id: 3, name: 'Innerwear', to: '/luna-demo/men/clothing/innerwear' },
+            { id: 1, name: 'Men', to: '/Rachna/men' },
+            { id: 2, name: 'Clothing', to:'/Rachna/men/clothing'},
+            { id: 3, name: 'Innerwear', to: '/Rachna/men/clothing/innerwear' },
         ],
 
         //Product Images

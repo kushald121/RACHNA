@@ -1,136 +1,237 @@
-import { Fragment, useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import axios from 'axios';
+import { useAuth } from '../../contexts/AuthContext';
 
-// TEXT INPUT HERE
-const products = [
-  {
-    id: 1,
-    name: 'Palm Silk T-Shirt',
-    category: "Men's Casual T-Shirts",
-    href: '/luna-demo/men/clothing/tops/basic-tee/',
-    price: '$158.00',
-    quantity: 2,
-    imageSrc: 'https://tommybahama.scene7.com/is/image/TommyBahama/ST326336_11438_main?$main_detail_500$',
-    imageAlt: 'image 1',
-  },
-  {
-    id: 2,
-    name: 'Medium Stuff Satchel',
-    category: "Women's Accessories",
-    href: '/luna-demo/error/',
-    price: '$60.00',
-    quantity: 1,
-    imageSrc: 'https://tommybahama.scene7.com/is/image/TommyBahama/BR34723BLWG_1055_main?$main_detail_500$',
-    imageAlt: 'image 2',
-  },
-  {
-    id: 3,
-    name: 'Coastal Breeze Polo Shirt',
-    category: "Men's Polo Shirt",
-    href: '/luna-demo/error/',
-    price: '$90.00',
-    quantity: 2,
-    imageSrc: 'https://tommybahama.scene7.com/is/image/TommyBahama/T220856_19393_main?$main_detail_500$',
-    imageAlt: 'image 3',
-  },
-  {
-    id: 4,
-    name: 'Chip Shot 10-Inch Shorts',
-    category: "Men's Pants",
-    href: '/luna-demo/error/',
-    price: '$110.00',
-    quantity: 1,
-    imageSrc: 'https://tommybahama.scene7.com/is/image/TommyBahama/ST889700_2939_main?$main_detail_500$',
-    imageAlt: 'image 4',
-  },
-  {
-    id: 5,
-    name: 'Palm Silk T-Shirt',
-    category: "Men's Casual T-Shirts",
-    href: '/luna-demo/error/',
-    price: '$158.00',
-    quantity: 1,
-    imageSrc: 'https://tommybahama.scene7.com/is/image/TommyBahama/ST326336_11438_main?$main_detail_500$',
-    imageAlt: 'image 1',
-  },
-  {
-    id: 6,
-    name: 'Medium Stuff Satchel',
-    category: "Women's Accessories",
-    href: '/luna-demo/error/',
-    price: '$60.00',
-    quantity: 1,
-    imageSrc: 'https://tommybahama.scene7.com/is/image/TommyBahama/BR34723BLWG_1055_main?$main_detail_500$',
-    imageAlt: 'image 2',
-  },
-  {
-    id: 7,
-    name: 'Coastal Breeze Polo Shirt',
-    category: "Men's Polo Shirt",
-    href: '/luna-demo/error/',
-    price: '$90.00',
-    quantity: 2,
-    imageSrc: 'https://tommybahama.scene7.com/is/image/TommyBahama/T220856_19393_main?$main_detail_500$',
-    imageAlt: 'image 3',
-  },
+const ShoppingCart = ({ open, setOpen }) => {
+  const [cartData, setCartData] = useState({ items: [], summary: {} });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // More products...
-];
+  const { user, loading: authLoading, getCurrentSessionId, getSessionType, getAuthHeaders } = useAuth();
 
-const ShoppingCart = () => {
-  // Condition state for opening and closing of shopping cart menu
-  const [open, setOpen] = useState(true);
-
-  // Condition state for calculating total price in shopping cart
-  const [totalPrice, setTotalPrice] = useState(0);
-  
-  // Function to add up price
+  // Debug logging (can be removed in production)
   useEffect(() => {
-    const calculateTotalPrice = () => {
-      let total = 0;
-      for (const product of products) {
-        const price = parseFloat(product.price.replace('$', ''));
-        const quantity = product.quantity;
-        total += price * quantity;
-      }
-      setTotalPrice(total);
-    };
-  
-    calculateTotalPrice();
-  });
+    if (!authLoading) {
+      console.log('Cart - Session ID:', getCurrentSessionId(), 'Type:', getSessionType());
+    }
+  }, [user, authLoading, getCurrentSessionId, getSessionType]);
 
-  // stagger motion animation
-  const containerMotion = {
-    visible: { transition: { staggerChildren: 0.1 } },
+  // Fetch cart when component opens and auth is ready
+  useEffect(() => {
+    if (open && !authLoading) {
+      fetchCart();
+    }
+  }, [open, authLoading]);
+
+  // Fetch cart data
+  const fetchCart = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      // Wait for auth to initialize
+      if (authLoading) {
+        console.log('Auth still loading, skipping cart fetch');
+        setIsLoading(false);
+        return;
+      }
+
+      // Check if auth functions are available
+      if (!getCurrentSessionId || !getSessionType) {
+        console.error('Auth functions not available');
+        setError('Authentication not initialized');
+        return;
+      }
+
+      const sessionId = getCurrentSessionId();
+      const sessionType = getSessionType();
+
+      if (!sessionId) {
+        console.error('No session ID available');
+        setError('No session available');
+        return;
+      }
+
+      let response;
+      if (sessionType === 'user') {
+        // Fetch from user cart
+        response = await axios.get(`http://localhost:5000/api/cart/${sessionId}`, {
+          headers: getAuthHeaders()
+        });
+      } else {
+        // Fetch from guest cart
+        response = await axios.get(`http://localhost:5000/api/guest-cart/${sessionId}`);
+      }
+
+      if (response.data.success) {
+        console.log('=== CART FETCH RESPONSE ===');
+        console.log('Cart items received:', response.data.cart.items.map(item => ({
+          id: item.productId || item.product_id,
+          name: item.name,
+          quantity: item.quantity
+        })));
+
+        // Use functional update to ensure we get the latest state
+        setCartData(prevData => {
+          console.log('Previous cart data:', prevData);
+          console.log('New cart data:', response.data.cart);
+          return response.data.cart;
+        });
+      } else {
+        setError(response.data.message || 'Failed to load cart');
+      }
+    } catch (error) {
+      console.error('Error fetching cart:', error);
+      setError(error.response?.data?.message || 'Failed to load cart');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // animation parameters for TEXT
-  const textMotion = {
-    // movement = FADE-IN
-    hidden: { opacity: 0 }, // INITIAL STAGE
-    visible: { opacity: 1, transition: { duration: 0.25, ease: 'easeInOut' }}, // ANIMATION STAGE
+  // Update item quantity
+  const updateQuantity = async (productId, newQuantity) => {
+    // Prevent multiple simultaneous updates
+    if (isLoading) {
+      console.log('Update already in progress, skipping...');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      console.log('=== UPDATING QUANTITY ===');
+      console.log('Product ID:', productId);
+      console.log('New Quantity:', newQuantity);
+      console.log('Current cart items:', cartData.items.map(item => ({
+        id: item.productId || item.product_id,
+        name: item.name,
+        quantity: item.quantity
+      })));
+
+      const sessionId = getCurrentSessionId();
+      const sessionType = getSessionType();
+
+      console.log('Session ID:', sessionId);
+      console.log('Session Type:', sessionType);
+
+      let response;
+      if (sessionType === 'user') {
+        // Update user cart
+        response = await axios.put('http://localhost:5000/api/cart', {
+          userId: sessionId,
+          productId: parseInt(productId), // Ensure productId is a number
+          quantity: newQuantity
+        }, {
+          headers: getAuthHeaders()
+        });
+        console.log('User cart update response:', response.data);
+      } else {
+        // Update guest cart
+        response = await axios.put('http://localhost:5000/api/guest-cart/update', {
+          sessionId,
+          productId: parseInt(productId), // Ensure productId is a number
+          quantity: newQuantity
+        });
+        console.log('Guest cart update response:', response.data);
+      }
+
+      // Only refresh if the backend update was successful
+      if (response.data.success) {
+        console.log('Backend update successful, refreshing cart...');
+        await fetchCart();
+      } else {
+        console.error('Backend update failed:', response.data.message);
+        setError(response.data.message || 'Failed to update quantity');
+      }
+
+      console.log('=== QUANTITY UPDATE COMPLETE ===');
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+      setError('Failed to update quantity');
+      await fetchCart(); // Refresh on error
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Remove item from cart
+  const removeItem = async (productId) => {
+    try {
+      const sessionId = getCurrentSessionId();
+      const sessionType = getSessionType();
+
+      if (sessionType === 'user') {
+        // Remove from user cart
+        await axios.delete(`http://localhost:5000/api/cart/${productId}`, {
+          data: { userId: sessionId },
+          headers: getAuthHeaders()
+        });
+      } else {
+        // Remove from guest cart
+        await axios.delete('http://localhost:5000/api/guest-cart/remove', {
+          data: { sessionId, productId }
+        });
+      }
+
+      fetchCart(); // Refresh cart
+
+      // Refresh navbar counts
+      if (window.refreshNavbarCounts) {
+        window.refreshNavbarCounts();
+      }
+
+      // Refresh navbar counts
+      if (window.refreshNavbarCounts) {
+        window.refreshNavbarCounts();
+      }
+    } catch (error) {
+      console.error('Error removing item:', error);
+    }
+  };
+
+  // Fetch cart when component opens
+  useEffect(() => {
+    if (open) {
+      fetchCart();
+    }
+  }, [open]);
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
   };
 
   const handleCheckout = async () => {
+    const sessionType = getSessionType();
 
-      fetch('/create-checkout-session', {
-        method: 'POST',
-      })
-      .then(res => res.json())
-      .then(url => {
-        window.location.href = url
-      })
-      .catch(err => console.log(err))
-  }
+    if (sessionType === 'guest') {
+      // Redirect to login page for guest users
+      alert('Please login to proceed with checkout');
+      // You can redirect to login page here
+      window.location.href = '/Rachna/user-login/';
+    } else {
+      // Proceed to address selection for authenticated users
+      console.log('Proceeding to address selection...');
+      // Navigate to address page first
+      window.location.href = '/Rachna/address/';
+    }
+  };
+
+  const textMotion = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.25, ease: 'easeInOut' }},
+  };
 
   return (
     <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={setOpen}>
-        {/* Background Screen Transition */}
+      <Dialog as="div" className="relative z-50" onClose={setOpen}>
         <Transition.Child
           as={Fragment}
           enter="ease-in-out duration-500"
@@ -140,161 +241,198 @@ const ShoppingCart = () => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          {/* Background Screen */}
-          <div className="fixed inset-0 bg-black bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
-        
-        {/* Shopping Cart Menu Position */}
-        <motion.div className="fixed inset-y-0 right-0 flex max-w-full"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{once: true, amount: 0.2}}
-          variants={containerMotion}
-          >
-          {/* Side Menu Transition */}
-          <Transition.Child
-            as={Fragment}
-            enter="transform transition ease-in-out duration-500 sm:duration-700"
-            enterFrom="translate-x-full"
-            enterTo="translate-x-0"
-            leave="transform transition ease-in-out duration-500 sm:duration-700"
-            leaveFrom="translate-x-0"
-            leaveTo="translate-x-full"
-          >
-            {/* Shopping Cart Menu Settings */}
-            <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
-              <div className="flex h-full flex-col overflow-y-scroll bg-white">
-                <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-                  {/* Title + Exit Button */}
-                  <motion.div className="flex items-start justify-between" variants={textMotion}>
-                    {/* Header Text */}
-                    <h1 className="text-lg font-medium text-gray-900">Shopping Cart</h1>
-                    
-                    {/* Exit Button */}
-                    <div className="ml-3 flex h-7 items-center">
-                      <button
-                        type="button"
-                        className="-m-2 p-2 text-gray-400 hover:text-indigo-600"
-                        onClick={() => setOpen(false)}
+
+        <div className="fixed inset-0 overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+              <Transition.Child
+                as={Fragment}
+                enter="transform transition ease-in-out duration-500 sm:duration-700"
+                enterFrom="translate-x-full"
+                enterTo="translate-x-0"
+                leave="transform transition ease-in-out duration-500 sm:duration-700"
+                leaveFrom="translate-x-0"
+                leaveTo="translate-x-full"
+              >
+                <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
+                  <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
+                    {/* Header */}
+                    <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+                      <div className="flex items-start justify-between">
+                        <Dialog.Title className="text-lg font-medium text-gray-900">
+                          Shopping Cart
+                        </Dialog.Title>
+                        <div className="ml-3 flex h-7 items-center">
+                          <button
+                            type="button"
+                            className="-m-2 p-2 text-gray-400 hover:text-gray-500"
+                            onClick={() => setOpen(false)}
+                          >
+                            <XMarkIcon className="h-6 w-6" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Cart Items */}
+                      <motion.div
+                        className="mt-8"
+                        variants={textMotion}
+                        initial="hidden"
+                        animate="visible"
                       >
-                        <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-                      </button>
-                    </div>
-                  </motion.div>
-
-                  {/* Product Image + Info + Description + Price */}
-                  <motion.div className="mt-8" variants={textMotion}>
-                      <ul className="-my-6 divide-y divide-gray-200"> {/* Border Divider */}
-                        {products.map((product) => (
-                          <li key={product.id} className="flex py-6">
-                            {/* Product Image */}
-                            <Link to={product.href}>
-                              <div className="h-28 w-28 flex-shrink-0 overflow-hidden rounded-lg shadow transition-transform duration-300 transform hover:scale-95">
-                                <img
-                                  src={product.imageSrc}
-                                  alt={product.imageAlt}
-                                  className="h-full w-full object-cover object-center hover:opacity-75"
-                                />
-                              </div>
-                            </Link>
-
-                            <div className="ml-4 flex flex-1 flex-col">
-                              {/* Product Description */}
-                              <div className="flex justify-between">
-                                {/* Product Name */}
-                                <Link to={product.href}>
-                                  <h3 className='text-base font-medium text-gray-900 hover:text-indigo-600'>
-                                    {product.name}
-                                  </h3>
-                                </Link>
-
-                                {/* Product Price */}
-                                <p className="ml-4 text-base font-medium text-gray-900">{product.price}</p>
-                              </div>
-
-                              {/* Product Category */}
-                              <p className="mt-1 text-sm text-gray-400">{product.category}</p>
-                              
-                              {/* Quantity + Remove Features */}
-                              <div className="flex flex-1 items-end justify-between text-sm">
-                                {/* Product Quantity */}
-                                <p className="text-gray-500">Qty {product.quantity}</p>
-
-                                {/* Remove Button */}
-                                <div className="flex">
-                                  <button
-                                    type="button"
-                                    className="font-normal text-indigo-600 hover:underline"
-                                  >
-                                    Remove
-                                  </button>
+                        {isLoading ? (
+                          <div className="text-center py-8">Loading...</div>
+                        ) : error ? (
+                          <div className="text-center py-8 text-red-500">{error}</div>
+                        ) : cartData.items.length === 0 ? (
+                          <div className="text-center py-8 text-gray-500">
+                            Your cart is empty
+                          </div>
+                        ) : (
+                          <ul className="-my-6 divide-y divide-gray-200">
+                            {cartData.items.map((item, index) => (
+                              <li key={`${item.cartItemId || item.productId || item.product_id}-${index}`} className="flex py-6">
+                                {/* Product Image */}
+                                <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                  <img
+                                    src={item.image}
+                                    alt={item.name}
+                                    className="h-full w-full object-cover object-center"
+                                  />
                                 </div>
-                                
-                              </div>
-                              
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                  </motion.div>
-                </div>
 
-                {/* STATIONARY Checkout Tab */}
-                <motion.div className="border-t border-gray-200 px-4 py-6 sm:px-6" variants={textMotion}>
-                  {/* Subtotal Price */}
-                  <div className="flex justify-between text-base font-medium text-gray-900">
-                    <p>Subtotal</p>
+                                <div className="ml-4 flex flex-1 flex-col">
+                                  <div>
+                                    <div className="flex justify-between text-base font-medium text-gray-900">
+                                      <h3>{item.name}</h3>
+                                      <p className="ml-4">{formatCurrency(item.itemTotal)}</p>
+                                    </div>
+                                    <p className="mt-1 text-sm text-gray-500">{item.category}</p>
+                                    <div className="flex items-center mt-1">
+                                      <span className="text-sm font-medium">{formatCurrency(item.price)}</span>
+                                      {item.originalPrice && (
+                                        <span className="ml-2 text-sm text-gray-400 line-through">
+                                          {formatCurrency(item.originalPrice)}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div className="flex flex-1 items-end justify-between text-sm">
+                                    <div className="flex items-center">
+                                      <button
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                          const productId = item.productId || item.product_id;
+                                          const currentQuantity = item.quantity;
+                                          const newQuantity = currentQuantity - 1;
+                                          console.log('=== DECREASE BUTTON CLICKED ===');
+                                          console.log('Item:', item);
+                                          console.log('Product ID:', productId);
+                                          console.log('Current quantity:', currentQuantity);
+                                          console.log('New quantity will be:', newQuantity);
+                                          updateQuantity(productId, newQuantity);
+                                        }}
+                                        className="px-2 py-1 border rounded-l-md hover:bg-gray-100"
+                                        disabled={item.quantity <= 1}
+                                      >
+                                        -
+                                      </button>
+                                      <span className="px-3 py-1 border-t border-b bg-gray-50">
+                                        {item.quantity}
+                                      </span>
+                                      <button
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                          const productId = item.productId || item.product_id;
+                                          const currentQuantity = item.quantity;
+                                          const newQuantity = currentQuantity + 1;
+                                          console.log('=== INCREASE BUTTON CLICKED ===');
+                                          console.log('Item:', item);
+                                          console.log('Product ID:', productId);
+                                          console.log('Current quantity:', currentQuantity);
+                                          console.log('New quantity will be:', newQuantity);
+                                          updateQuantity(productId, newQuantity);
+                                        }}
+                                        className="px-2 py-1 border rounded-r-md hover:bg-gray-100"
+                                        disabled={item.quantity >= item.stock}
+                                      >
+                                        +
+                                      </button>
+                                    </div>
 
-                    {/* Subtotal Price to in US locale (commas) and TWO Decimal Places */}
-                    <p>${totalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                    <button
+                                      type="button"
+                                      onClick={() => removeItem(item.productId || item.product_id)}
+                                      className="font-medium text-indigo-600 hover:text-indigo-500"
+                                    >
+                                      Remove
+                                    </button>
+                                  </div>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </motion.div>
+                    </div>
+
+                    {/* Cart Summary */}
+                    {cartData.items.length > 0 && (
+                      <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span>Subtotal</span>
+                            <span>{formatCurrency(cartData.summary.subtotal)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Shipping</span>
+                            <span>{cartData.summary.shipping === 0 ? 'Free' : formatCurrency(cartData.summary.shipping)}</span>
+                          </div>
+                          <div className="flex justify-between text-base font-medium text-gray-900 border-t pt-2">
+                            <span>Total</span>
+                            <span>{formatCurrency(cartData.summary.total)}</span>
+                          </div>
+                        </div>
+
+                        <p className="mt-0.5 text-sm text-gray-500">
+                          Shipping and taxes calculated at checkout.
+                        </p>
+
+                        <div className="mt-6">
+                          <button
+                            onClick={handleCheckout}
+                            className="w-full flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                          >
+                            Checkout
+                          </button>
+                        </div>
+                        <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
+                          <p>
+                            or{' '}
+                            <button
+                              type="button"
+                              className="font-medium text-indigo-600 hover:text-indigo-500"
+                              onClick={() => setOpen(false)}
+                            >
+                              Continue Shopping
+                            </button>
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
-
-                  {/* Subtitle Information */}
-                  <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
-
-                  {/*<Link to="/create-checkout-session"
-                      type="submit"
-                      className="flex items-center justify-center rounded-lg bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-md hover:bg-indigo-700 hover:shadow-none"
-                    >
-                      Checkout
-                    </Link>/*
-                  
-                  {/* Checkout Button */}
-                  <div className="mt-6">
-                    <button
-                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                      onClick={handleCheckout}
-                    >
-                      Checkout
-                    </button>
-                    
-                  </div>
-                  
-                  {/* Additional Information */}
-                  <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
-                    <p>
-                      or
-                      <button
-                        type="button"
-                        className="font-medium text-indigo-600 hover:text-transparent bg-clip-text bg-gradient-to-l from-blue-500 to-purple-500 ml-1"
-                        onClick={() => setOpen(false)}
-                      >
-                        Continue Shopping &rarr;
-                      </button>
-                    </p>
-                  </div>
-                  
-                </motion.div>
-
-              </div>
-            </Dialog.Panel>
-
-          </Transition.Child>
-        </motion.div>
-
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </div>
       </Dialog>
     </Transition.Root>
-  )
-}
+  );
+};
 
-export default ShoppingCart
+export default ShoppingCart;

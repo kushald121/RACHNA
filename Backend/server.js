@@ -1,11 +1,19 @@
 import express from "express";
 import dotenv from "dotenv";
-import productRoutes  from "./api/routes/productRoutes.js";
 import cors from "cors";
-import authRoutes from "./api/routes/authRoutes.js"; // adjust path
+// import authRoutes from "./api/routes/authRoutes.js"; // REMOVED - Legacy duplicate OTP system
 import adminAuth from "./api/routes/adminAuth.js";
+import userAuth from "./api/routes/userAuth.js";
 import fetchProducts from "./api/routes/fetchProduct.js";
 import addProduct from "./api/routes/addProduct.js";
+import fetchCart from "./api/routes/fetchCart.js";
+import addCart from "./api/routes/addCart.js";
+import guestCart from "./api/routes/guestCart.js";
+import guestFavorites from "./api/routes/guestFavorites.js";
+import userFavorites from "./api/routes/userFavorites.js";
+import orders from "./api/routes/orders.js";
+import payment from "./api/routes/payment.js";
+import userAddresses from "./api/routes/userAddresses.js";
 import path from "path";
 import {fileURLToPath} from "url";
 dotenv.config();
@@ -23,10 +31,28 @@ app.use("/api/fetch",fetchProducts);
 
 app.use("/api/products",addProduct);
 
-app.use("/api/auth", authRoutes);
+// app.use("/api/auth", authRoutes); // REMOVED - Legacy duplicate OTP system
 
 
 app.use("/api/admin",adminAuth);
+
+app.use("/api/user", userAuth);
+
+app.use("/api/cart", fetchCart);
+
+app.use("/api/cart", addCart);
+
+app.use("/api/guest-cart", guestCart);
+
+app.use("/api/guest-favorites", guestFavorites);
+
+app.use("/api/user/favorites", userFavorites);
+
+app.use("/api/orders", orders);
+
+app.use("/api/payment", payment);
+
+app.use("/api/user/addresses", userAddresses);
 
 
 app.listen(port, () => {

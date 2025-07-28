@@ -13,13 +13,13 @@
         // General Information about the product
         name: 'PASTE',
         price: '$',
-        to: '/luna-demomen/clothing/adidas4/Adidas4',
-        
+        to: '/Rachna/men/clothing/adidas4/Adidas4',
+
         // Product Breadcrumbs
         breadcrumbs: [
-            { id: 1, name: 'Men', to: '/luna-demo/men' },
-            { id: 2, name: 'Clothing', to:'/luna-demo/men/clothing'},
-            { id: 3, name: 'PASTE', to: '/luna-demo/men/clothing/PASTE' },
+            { id: 1, name: 'Men', to: '/Rachna/men' },
+            { id: 2, name: 'Clothing', to:'/Rachna/men/clothing'},
+            { id: 3, name: 'PASTE', to: '/Rachna/men/clothing/PASTE' },
         ],
 
         //Product Images

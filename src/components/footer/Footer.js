@@ -12,10 +12,10 @@ const Footer = () => {
             {/* Company Logo */}
               <h1 class="font-bold text-2xl font-amperserif text-[#E50010]"> RACHNA</h1>
             {/* Side Headings */}
-            <p class="max-w-xs mt-4 text-gray-500">Established in 2025</p>
-            <p class="max-w-xs mt-2 text-gray-500">Based in Mumbai</p>
-            <a href='/luna-demo'>
-                <p class="max-w-xs mt-2 text-gray-500 hover:underline hover:text-indigo-600">
+            <p class="max-w-xs mt-4 text-gray-600 text-base">Established in 2025</p>
+            <p class="max-w-xs mt-2 text-gray-600 text-base">Based in Mumbai</p>
+            <a href='/Rachna'>
+                <p class="max-w-xs mt-2 text-gray-600 text-base hover:underline hover:text-indigo-600">
                   aymn@gmail.com
                 </p>
             </a>
@@ -126,31 +126,31 @@ const Footer = () => {
           <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:col-span-2 lg:grid-cols-4">
             {/* COLUMN #1 -> Shop */}
             <div>
-              <p class="font-medium text-gray-900">Shop</p>
+              <p class="font-semibold text-gray-900 text-lg">Shop</p>
 
               <nav aria-label="Footer Navigation - Services" class="mt-6">
-                <ul class="space-y-4 text-sm">
+                <ul class="space-y-4 text-base">
                   
                   <li>
-                    <Link to="/luna-demo/men/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
-                      Men
+                    <Link to="/Rachna/all-products/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
+                      Collections
                     </Link>
                   </li>
 
                   <li>
-                    <Link to="/luna-demo/new-arrivals/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
+                    <Link to="/Rachna/new-arrivals/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
                       New Arrivals
                     </Link>
                   </li>
 
                   <li>
-                    <Link to="/luna-demo/error/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
+                    <Link to="/Rachna/error/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
                       Accessories
                     </Link>
                   </li>
 
                   <li>
-                    <a href="/luna-demo/error/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
+                    <a href="/Rachna/error/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
                       Brands
                     </a>
                   </li>
@@ -160,30 +160,30 @@ const Footer = () => {
 
             {/* COLUMN #2 -> Company */}
             <div>
-              <p class="font-medium text-gray-900">Company</p>
+              <p class="font-semibold text-gray-900 text-lg">Company</p>
 
               <nav aria-label="Footer Navigation - Company" class="mt-6">
-                <ul class="space-y-4 text-sm">
+                <ul class="space-y-4 text-base">
                   <li>
-                    <Link to="/luna-demo/error/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
-                      About Luna
+                    <Link to="/Rachna/error/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
+                      About Rachna
                     </Link>
                   </li>
 
                   <li>
-                    <Link to="/luna-demo/error/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
+                    <Link to="/Rachna/error/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
                       Careers
                     </Link>
                   </li>
 
                   <li>
-                    <Link to="/luna-demo/error/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
+                    <Link to="/Rachna/error/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
                       Investors
                     </Link>
                   </li>
 
                   <li>
-                    <Link to="/luna-demo/error/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
+                    <Link to="/Rachna/error/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
                       Sustainability
                     </Link>
                   </li>
@@ -193,31 +193,31 @@ const Footer = () => {
             
             {/* COLUMN #3 -> Help */}
             <div>
-              <p class="font-medium text-gray-900">Help</p>
+              <p class="font-semibold text-gray-900 text-lg">Help</p>
 
               <nav aria-label="Footer Navigation - Company" class="mt-6">
-                <ul class="space-y-4 text-sm">
+                <ul class="space-y-4 text-base">
                   <li>
-                    <Link to="/luna-demo/sign-in/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
+                    <Link to="/Rachna/sign-in/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
                       My Account
                     </Link>
                   </li>
 
-                 
+
                   <li>
-                    <Link to="/luna-demo/error/"class="text-gray-700 transition hover:text-indigo-600 hover:underline">
+                    <Link to="/Rachna/error/"class="text-gray-700 transition hover:text-indigo-600 hover:underline">
                       Order Status
                     </Link>
                   </li>
 
                   <li>
-                    <Link to="/luna-demo/error/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
+                    <Link to="/Rachna/error/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
                       Refund & Exchange
                     </Link>
                   </li>
 
                   <li>
-                    <Link to="/luna-demo/error/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
+                    <Link to="/Rachna/error/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
                       Shipping & Delivery
                     </Link>
                   </li>
@@ -227,10 +227,10 @@ const Footer = () => {
 
             {/* COLUMN #4 -> */}
             <div>
-              <p class="font-medium text-gray-900">Legal</p>
+              <p class="font-semibold text-gray-900 text-lg">Legal</p>
 
               <nav aria-label="Footer Navigation - Legal" class="mt-6">
-                <ul class="space-y-4 text-sm">
+                <ul class="space-y-4 text-base">
                   <li>
                     <Link to="/luna-demo/error/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
                       Privacy Policy

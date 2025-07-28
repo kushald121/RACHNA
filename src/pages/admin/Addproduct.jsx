@@ -99,7 +99,7 @@ const AddProduct = () => {
         formDataToSend.append('media', file);
       });
 
-      const response = await axios.post('/api/products', formDataToSend, {
+      const response = await axios.post('http://localhost:5000/api/products', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -239,32 +239,56 @@ const AddProduct = () => {
                 {/* Media Preview Section */}
                 {previewUrls.length > 0 && (
                   <div className="mt-6">
-                    <div className="mb-4 bg-gray-100 rounded-lg p-2 h-80 w-full flex items-center justify-center">
+                    <div className="relative mb-4 bg-gray-100 rounded-lg p-4 w-full" style={{ minHeight: '600px' }}>
                       {previewUrls[activePreviewIndex]?.type === 'image' ? (
-                        <img 
-                          src={previewUrls[activePreviewIndex].url} 
-                          alt={`Preview ${activePreviewIndex}`} 
-                          className="max-h-full max-w-full object-contain rounded-lg"
-                        />
-                      ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <video 
+                          <img 
                             src={previewUrls[activePreviewIndex].url} 
-                            className="max-h-full max-w-full rounded-lg"
-                            controls
+                            alt={`Preview ${activePreviewIndex}`} 
+                            className="max-h-full max-w-full object-contain rounded-lg"
                           />
                         </div>
+                      ) : (
+                        <video 
+                          src={previewUrls[activePreviewIndex].url} 
+                          className="w-full rounded-lg"
+                          controls
+                          preload="metadata"
+                          style={{ 
+                            height: '520px',
+                            maxHeight: '520px'
+                          }}
+                        />
                       )}
                       <button
                         type="button"
                         onClick={() => removeMedia(activePreviewIndex)}
-                        className="absolute top-4 right-4 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg shadow-md hover:bg-red-600 transition-colors z-50"
+                        style={{ 
+                          position: 'absolute',
+                          top: '16px',
+                          right: '16px',
+                          backgroundColor: '#ef4444',
+                          color: 'white',
+                          borderRadius: '50%',
+                          width: '32px',
+                          height: '32px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '20px',
+                          fontWeight: 'bold',
+                          border: 'none',
+                          cursor: 'pointer',
+                          zIndex: 1000,
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                        }}
+                        onMouseEnter={(e) => e.target.style.backgroundColor = '#dc2626'}
+                        onMouseLeave={(e) => e.target.style.backgroundColor = '#ef4444'}
                         title="Remove this media"
                       >
                         ×
                       </button>
                     </div>
-                    
                     <div className="flex overflow-x-auto pb-2 gap-2">
                       {previewUrls.map((item, index) => (
                         <div 
@@ -284,7 +308,9 @@ const AddProduct = () => {
                             />
                           ) : (
                             <div className="w-full h-full bg-gray-200 rounded-md flex items-center justify-center">
-                              <span className="text-xs font-medium">Video</span>
+                              <svg className="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                              </svg>
                             </div>
                           )}
                           <button
@@ -293,7 +319,7 @@ const AddProduct = () => {
                               e.stopPropagation();
                               removeMedia(index);
                             }}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 transition-colors z-50"
+                            className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs hover:bg-red-600 transition-colors z-50"
                             title="Remove this media"
                           >
                             ×

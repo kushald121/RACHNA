@@ -17,7 +17,7 @@ RESET=$(tput sgr0)
 
 div="${MAGENTA}|${RESET}"
 
-address="/Users/chang/Desktop/Dashboard/luna-demo/src/pages"
+address="/Users/chang/Desktop/Dashboard/Rachna/src/pages"
 
 # Automation Task NAMES
 option_1="Product Category"     # PURPOSE: category group
@@ -84,11 +84,11 @@ category_INPUT()
     
         // Category Filter
         subCategories: [
-            { name: 'Tops', href:'/luna-demo/$gender/clothing/tops'},
-            { name: 'Bottoms', href: '/luna-demo/$gender/clothing/bottoms' },
-            { name: 'Innerwear', href: '/luna-demo/$gender/clothing/innerwear' },
-            { name: 'Outerwear', href: '/luna-demo/$gender/clothing/outerwear' },
-            { name: 'Activewear', href: '/luna-demo/$gender/clothing/activewear' },
+            { name: 'Tops', href:'/Rachna/$gender/clothing/tops'},
+            { name: 'Bottoms', href: '/Rachna/$gender/clothing/bottoms' },
+            { name: 'Innerwear', href: '/Rachna/$gender/clothing/innerwear' },
+            { name: 'Outerwear', href: '/Rachna/$gender/clothing/outerwear' },
+            { name: 'Activewear', href: '/Rachna/$gender/clothing/activewear' },
         ],
     
         // Specific Category Filters
@@ -237,13 +237,13 @@ listing_INPUT()
         // General Information about the product
         name: 'PASTE',
         price: '\$',
-        to: '/luna-demomen/clothing/$filler_2/$filler_3',
+        to: '/Rachna/men/clothing/$filler_2/$filler_3',
         
         // Product Breadcrumbs
         breadcrumbs: [
-            { id: 1, name: 'Men', to: '/luna-demo/$gender' },
-            { id: 2, name: 'Clothing', to:'/luna-demo/$gender/clothing'},
-            { id: 3, name: 'PASTE', to: '/luna-demo/$gender/clothing/PASTE' },
+            { id: 1, name: 'Men', to: '/Rachna/$gender' },
+            { id: 2, name: 'Clothing', to:'/Rachna/$gender/clothing'},
+            { id: 3, name: 'PASTE', to: '/Rachna/$gender/clothing/PASTE' },
         ],
 
         //Product Images
@@ -306,7 +306,7 @@ listing_INPUT()
             id: 1,
             name: 'Basic Tee',
             category: \"Men's T-Shirts\",
-            href: '/luna-demo/error',
+            href: '/Rachna/error',
             imageSrc: 'https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg',
             imageAlt: \"Front of men's Basic Tee in black.\",
             price: '\$35',
@@ -316,7 +316,7 @@ listing_INPUT()
             id: 2,
             name: 'Basic Tee',
             category: \"Men's T-Shirts\",
-            href: '/luna-demo/error',
+            href: '/Rachna/error',
             imageSrc: 'https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg',
             imageAlt: \"Front of men's Basic Tee in black.\",
             price: '\$35',
@@ -376,7 +376,7 @@ category_automate()
         ${YELLOW}export { default as $filler_2 } from './$filler_1/$filler_2';${RESET}
 
         - Please add the following export lint to ${MAGENTA}./App.js${RESET}:
-        ${YELLOW}<Route path=\"/luna-demo/$filler_1\" element={<$filler_2 />} />${RESET}
+        ${YELLOW}<Route path=\"/Rachna/$filler_1\" element={<$filler_2 />} />${RESET}
         
         - Make sure to import ${CYAN}$filler_2${RESET} at the top of ${MAGENTA}./App.js${RESET}
         "
@@ -433,7 +433,7 @@ listing_automate()
     ${YELLOW}export { default as $filler_3 } from './$filler_1/$filler_2/$filler_3';${RESET}
     
     - Please add the following export lint to ${MAGENTA}./App.js${RESET}:
-    ${YELLOW}<Route path=\"/luna-demo/$filler_1/$filler_2\" element={<$filler_3 />} />${RESET}
+    ${YELLOW}<Route path=\"/Rachna/$filler_1/$filler_2\" element={<$filler_3 />} />${RESET}
     
     - Make sure to import ${CYAN}$filler_3${RESET} at the top of ${MAGENTA}./App.js${RESET}
     "

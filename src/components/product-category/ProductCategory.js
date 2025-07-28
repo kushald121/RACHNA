@@ -191,42 +191,32 @@ const ProductCategory = ({ name, sortOptions, subCategories, filters, products }
                 </Menu.Button>
 
                 {/* Dropdown Layout */}
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                >
-                  <Menu.Items className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-lg bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    <motion.div className="py-2"
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{once: true, amount: 0.1}}
-                      variants={containerMotion}
-                      >
-                      {/* Dropdown Options */}
-                      {sortOptions.map((option) => (
-                        <Menu.Item key={option.name}>
-                          {({ active }) => (
-                            <motion.span variants={textMotion}>
-                              <Link to={option.href} className={classNames(
-                                option.current ? 'font-medium text-gray-900' : 'text-gray-500',
-                                active ? 'text-indigo-600' : '',
-                                'block px-4 py-2 text-sm'
-                                )}
-                              >
-                                {option.name}
-                              </Link>
-                            </motion.span>
-                          )}
-                        </Menu.Item>
-                      ))}
-                    </motion.div>
-                  </Menu.Items>
-                </Transition>
+                <Menu.Items className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-lg bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none transition ease-out duration-100 transform opacity-0 scale-95 data-[open]:opacity-100 data-[open]:scale-100">
+                      <motion.div className="py-2"
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{once: true, amount: 0.1}}
+                        variants={containerMotion}
+                        >
+                        {/* Dropdown Options */}
+                        {sortOptions.map((option) => (
+                          <Menu.Item key={option.name}>
+                            {({ active }) => (
+                              <motion.span variants={textMotion}>
+                                <Link to={option.href} className={classNames(
+                                  option.current ? 'font-medium text-gray-900' : 'text-gray-500',
+                                  active ? 'text-indigo-600' : '',
+                                  'block px-4 py-2 text-sm'
+                                  )}
+                                >
+                                  {option.name}
+                                </Link>
+                              </motion.span>
+                            )}
+                          </Menu.Item>
+                        ))}
+                      </motion.div>
+                </Menu.Items>
 
               </Menu>
             </motion.span>

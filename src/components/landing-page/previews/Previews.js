@@ -9,14 +9,14 @@ const callouts = [
     description: 'For anime fans, with popular characters and designs.',
     imageSrc: 'https://thalasiknitfab.com/cdn/shop/files/ANIMEOVERSIZEDTSHIRT_6e28c0e6-b2a8-4932-a59b-4cc93ec85245_490x.progressive.png.jpg?v=1734612522',
     imageAlt: 'trending collection #1',
-    to: '/luna-demo/new-arrivals/',
+    to: '/Rachna/new-arrivals/',
   },
   {
     name: 'Plain Basics',
     description: 'Clean, simple, plain-colored t-shirts for daily wear',
     imageSrc: 'https://triprindia.com/cdn/shop/files/TGYRNOS-PLAIND1651.jpg?v=1741861583',
     imageAlt: 'trending collection #2',
-    to: '/luna-demo/summer-sale/',
+    to: '/Rachna/summer-sale/',
   },
   {
     name: 'Oversized Streetwear',
@@ -37,21 +37,21 @@ const callouts = [
     description: 'Subtle logos, neutral tones, and classy minimal designs.',
     imageSrc: 'https://i.pinimg.com/736x/1d/85/a1/1d85a13d1e24ee2d8b0244118309a910.jpg',
     imageAlt: 'trending collection #3',
-    to: '/luna-demo/accessories/',
+    to: '/Rachna/accessories/',
   },
   {
     name: 'Customizable T-Shirts',
     description: 'Personalize your desired tshirt.',
     imageSrc: 'https://www.yourprint.in/wp-content/uploads/2023/10/mens-t-shirt.jpg',
     imageAlt: 'trending collection #3',
-    to: '/luna-demo/accessories/',
+    to: '/Rachna/accessories/',
   },
   {
     name: 'Customized Hoodies',
     description: 'Personalize your desired tshirt.',
     imageSrc: ' https://www.yourprint.in/wp-content/uploads/2023/10/mens-hoodie.jpg',
     imageAlt: 'trending collection #3',
-    to: '/luna-demo/accessories/',
+    to: '/Rachna/accessories/',
   },
 ]
 
