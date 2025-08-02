@@ -287,7 +287,7 @@ router.get("/admin/all", async (req, res) => {
 
     // Verify admin token (you might want to create a proper middleware for this)
     const jwt = await import('jsonwebtoken');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.default.verify(token, process.env.JWT_SECRET);
 
     if (!decoded.adminId) {
       return res.status(401).json({
@@ -343,7 +343,7 @@ router.put("/admin/:orderId/status", async (req, res) => {
 
     // Verify admin token
     const jwt = await import('jsonwebtoken');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.default.verify(token, process.env.JWT_SECRET);
 
     if (!decoded.adminId) {
       return res.status(401).json({
@@ -353,10 +353,10 @@ router.put("/admin/:orderId/status", async (req, res) => {
     }
 
     const { orderId } = req.params;
-    const { status } = req.body;
+    const { status, notes } = req.body;
 
     // Validate status
-    const validStatuses = ['pending', 'confirmed', 'delivered', 'cancelled'];
+    const validStatuses = ['Pending', 'Confirmed', 'Delivered', 'Cancelled'];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
@@ -364,23 +364,108 @@ router.put("/admin/:orderId/status", async (req, res) => {
       });
     }
 
-    // Update order status
-    await pool.query(`
-      UPDATE orders
-      SET order_status = $1, updated_at = CURRENT_TIMESTAMP
-      WHERE id = $2
-    `, [status, orderId]);
+    // Start transaction
+    await pool.query('BEGIN');
 
-    res.json({
-      success: true,
-      message: "Order status updated successfully"
-    });
+    try {
+      // Get current order status
+      const currentOrderResult = await pool.query(
+        'SELECT order_status FROM orders WHERE id = $1',
+        [orderId]
+      );
+
+      if (currentOrderResult.rows.length === 0) {
+        await pool.query('ROLLBACK');
+        return res.status(404).json({
+          success: false,
+          message: "Order not found"
+        });
+      }
+
+      const currentStatus = currentOrderResult.rows[0].order_status;
+
+      // Update order status
+      await pool.query(`
+        UPDATE orders
+        SET order_status = $1
+        WHERE id = $2
+      `, [status, orderId]);
+
+      // Add entry to order status history
+      await pool.query(`
+        INSERT INTO order_status_history (order_id, status, notes, changed_by)
+        VALUES ($1, $2, $3, $4)
+      `, [orderId, status, notes || `Status changed from ${currentStatus} to ${status}`, decoded.adminId]);
+
+      // Commit transaction
+      await pool.query('COMMIT');
+
+      res.json({
+        success: true,
+        message: "Order status updated successfully"
+      });
+
+    } catch (error) {
+      await pool.query('ROLLBACK');
+      throw error;
+    }
 
   } catch (error) {
     console.error('Error updating order status:', error);
     res.status(500).json({
       success: false,
       message: "Failed to update order status"
+    });
+  }
+});
+
+// Admin: Get order status history
+router.get("/admin/:orderId/history", async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: "Admin authentication required"
+      });
+    }
+
+    // Verify admin token
+    const jwt = await import('jsonwebtoken');
+    const decoded = jwt.default.verify(token, process.env.JWT_SECRET);
+
+    if (!decoded.adminId) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid admin token"
+      });
+    }
+
+    const { orderId } = req.params;
+
+    const historyResult = await pool.query(`
+      SELECT
+        osh.id,
+        osh.status,
+        osh.notes,
+        osh.created_at,
+        au.username as changed_by_name
+      FROM order_status_history osh
+      LEFT JOIN admin_users au ON osh.changed_by = au.id
+      WHERE osh.order_id = $1
+      ORDER BY osh.created_at DESC
+    `, [orderId]);
+
+    res.json({
+      success: true,
+      history: historyResult.rows
+    });
+
+  } catch (error) {
+    console.error('Error fetching order history:', error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch order history"
     });
   }
 });

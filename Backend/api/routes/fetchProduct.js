@@ -16,9 +16,30 @@ router.get("/",async (req,res) => {
                product_media pm ON p.id = pm.product_id
                WHERE
                  pm.media_type = 'image' OR pm.media_type IS NULL`);
+
+        // Process the products to ensure proper image URLs
+        const processedProducts = products.rows.map(product => {
+            let imageUrl = 'https://via.placeholder.com/300x300/E5E7EB/9CA3AF?text=No+Image';
+
+            if (product.image) {
+                if (product.image.startsWith('http')) {
+                    // External URL (like Unsplash)
+                    imageUrl = product.image;
+                } else {
+                    // Local file - construct full URL
+                    imageUrl = `http://localhost:5000/public${product.image}`;
+                }
+            }
+
+            return {
+                ...product,
+                image: imageUrl
+            };
+        });
+
         res.json({
             success: true,
-            products: products.rows
+            products: processedProducts
         });
     }  catch(error) {
         console.error("Error fetching products:",error);

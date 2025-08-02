@@ -196,7 +196,7 @@ const FeaturedProducts = () => {
               <div className="p-4">
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="text-sm font-medium text-gray-900 line-clamp-2">
-                    <Link to={`/luna-demo/product/${product.id}`}>
+                    <Link to={`/Rachna/product/${product.id}`}>
                       <span aria-hidden="true" className="absolute inset-0" />
                       {product.name}
                     </Link>
@@ -239,7 +239,7 @@ const FeaturedProducts = () => {
         {/* View All Products Button */}
         <div className="text-center mt-12">
           <Link
-            to="/luna-demo/all-products/"
+            to="/Rachna/allproducts/"
             className="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200"
           >
             View All Products

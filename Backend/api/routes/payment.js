@@ -3,6 +3,7 @@ import { pool } from "../../db.js";
 import { verifyUserToken } from "../middlewares/verifyUser.js";
 import { verifyToken } from "../middlewares/verify.js";
 import { upload } from "../middlewares/multer.js";
+import { sendOrderConfirmationEmail, sendAdminOrderNotificationEmail } from "../utils/sendEmail.js";
 
 const router = express.Router();
 
@@ -32,9 +33,9 @@ router.post("/verify", verifyUserToken, upload.single('screenshot'), async (req,
     const order = orderResult.rows[0];
     console.log('Found order:', order);
 
-    // Check if payment verification already exists
+    // Check if payment verification already exists for this order
     const existingVerification = await pool.query(`
-      SELECT id FROM payment_verifications 
+      SELECT id FROM payment_verifications
       WHERE order_id = $1
     `, [orderId]);
 
@@ -42,6 +43,19 @@ router.post("/verify", verifyUserToken, upload.single('screenshot'), async (req,
       return res.status(400).json({
         success: false,
         message: "Payment verification already submitted for this order"
+      });
+    }
+
+    // Check if UPI transaction ID has already been used
+    const existingTransaction = await pool.query(`
+      SELECT id, order_id FROM payment_verifications
+      WHERE upi_transaction_id = $1 AND verification_status = 'verified'
+    `, [transactionId]);
+
+    if (existingTransaction.rows.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "This UPI transaction ID has already been used for another order. Each transaction ID can only be used once."
       });
     }
 
@@ -76,6 +90,65 @@ router.post("/verify", verifyUserToken, upload.single('screenshot'), async (req,
     } catch (historyError) {
       console.log('Order status history table might not exist:', historyError.message);
       // Continue without adding to history if table doesn't exist
+    }
+
+    // Get order details for email
+    const orderDetailsResult = await pool.query(`
+      SELECT
+        o.id,
+        o.products,
+        o.total_amount,
+        o.shipping_address,
+        o.ordered_at,
+        u.name as user_name,
+        u.email as user_email,
+        u.phone as user_phone
+      FROM orders o
+      JOIN users u ON o.user_id = u.id
+      WHERE o.id = $1
+    `, [orderId]);
+
+    if (orderDetailsResult.rows.length > 0) {
+      const orderDetails = orderDetailsResult.rows[0];
+
+      // Prepare email data
+      const emailData = {
+        userName: orderDetails.user_name,
+        userEmail: orderDetails.user_email,
+        userPhone: orderDetails.user_phone,
+        orderNumber: `ORD${orderDetails.id}${new Date(orderDetails.ordered_at).getTime()}`.slice(0, 15),
+        orderDateTime: new Date(orderDetails.ordered_at).toLocaleString('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        shippingAddress: orderDetails.shipping_address,
+        products: orderDetails.products,
+        subtotal: orderDetails.total_amount,
+        shippingCharge: 0,
+        totalDiscount: 0,
+        grandTotal: orderDetails.total_amount,
+        paymentStatus: 'Pending Verification',
+        orderStatus: 'Confirmed'
+      };
+
+      // Send confirmation emails
+      try {
+        // Send user confirmation email
+        await sendOrderConfirmationEmail(emailData.userEmail, emailData);
+        console.log('User confirmation email sent for order:', orderId);
+
+        // Send admin notification email
+        const adminEmail = process.env.SMTP_EMAIL; // Use the same email as sender for admin notifications
+        await sendAdminOrderNotificationEmail(adminEmail, emailData);
+        console.log('Admin notification email sent for order:', orderId);
+      } catch (emailError) {
+        console.error('Error sending confirmation emails:', emailError);
+        // Don't fail the request if email fails
+      }
     }
 
     res.json({

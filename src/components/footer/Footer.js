@@ -138,7 +138,7 @@ const Footer = () => {
                   </li>
 
                   <li>
-                    <Link to="/Rachna/new-arrivals/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
+                    <Link to="/Rachna/allproducts/" class="text-gray-700 transition hover:text-indigo-600 hover:underline">
                       New Arrivals
                     </Link>
                   </li>

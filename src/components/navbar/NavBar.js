@@ -268,7 +268,7 @@ const NavBar = () => {
 
       {/* DESKTOP MENU - MYNTRA STYLE */}
       <header className="relative bg-white shadow-sm">
-        <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <nav className="mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: '85%' }}>
           <motion.div
             className="border-b border-gray-200"
             initial="hidden"
@@ -276,7 +276,7 @@ const NavBar = () => {
             viewport={{ once: true, amount: 0.2 }}
             variants={containerMotion1}
           >
-            <div className="flex h-16 lg:h-20 items-center justify-between">
+            <div className="flex h-16 lg:h-20 items-center justify-between w-full">
               {/* LEFT SECTION: Mobile Menu + Logo + Navigation */}
               <div className="flex items-center">
                 {/* Mobile Menu Button */}
@@ -297,7 +297,7 @@ const NavBar = () => {
                 </motion.div>
 
                 {/* Desktop Navigation Links */}
-                <div className="hidden lg:flex lg:ml-12 lg:space-x-8">
+                <div className="hidden lg:flex lg:ml-16 lg:space-x-12">
                   {navigation.pages.map((page) => (
                     <motion.div key={page.name} variants={textMotion}>
                       <Link
@@ -312,7 +312,7 @@ const NavBar = () => {
               </div>
 
               {/* CENTER SECTION: Search Bar */}
-              <div className="flex-1 max-w-lg mx-4 lg:mx-8">
+              <div className="flex-1 max-w-2xl mx-6 lg:mx-12">
                 <motion.div className="hidden lg:flex relative w-full" variants={textMotion}>
                   <div className="relative w-full">
                     <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -326,7 +326,7 @@ const NavBar = () => {
               </div>
 
               {/* RIGHT SECTION: India Flag + Profile + Wishlist + Bag */}
-              <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-8">
                 {/* India Flag */}
                 <motion.div className="hidden lg:flex items-center" variants={textMotion}>
                   <span className="text-lg">🇮🇳</span>
@@ -340,7 +340,9 @@ const NavBar = () => {
                         <>
                           <Menu.Button className="flex flex-col items-center text-gray-700 hover:text-indigo-600 transition-colors">
                             <UserIcon className="h-6 w-6" />
-                            <span className="text-xs font-bold uppercase mt-1 hidden lg:block">PROFILE</span>
+                            <span className="text-xs font-bold uppercase mt-1 hidden lg:block">
+                              {user?.name ? user.name.split(' ')[0].toUpperCase() : 'PROFILE'}
+                            </span>
                           </Menu.Button>
                           <Transition
                             as={Fragment}

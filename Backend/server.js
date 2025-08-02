@@ -23,36 +23,42 @@ const port = 5000;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-app.use("/public", express.static(path.join(__dirname, "public")));
-app.use(cors());
+
+// CORS configuration
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://localhost:3001'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
-app.use("/api/fetch",fetchProducts);
+// Static files with CORS headers
+app.use("/public", (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+}, express.static(path.join(__dirname, "public")));
 
-app.use("/api/products",addProduct);
-
-// app.use("/api/auth", authRoutes); // REMOVED - Legacy duplicate OTP system
-
-
-app.use("/api/admin",adminAuth);
-
+// Routes
+app.use("/api/admin", adminAuth);
 app.use("/api/user", userAuth);
-
-app.use("/api/cart", fetchCart);
-
-app.use("/api/cart", addCart);
-
-app.use("/api/guest-cart", guestCart);
-
-app.use("/api/guest-favorites", guestFavorites);
-
-app.use("/api/user/favorites", userFavorites);
-
-app.use("/api/orders", orders);
-
 app.use("/api/payment", payment);
 
+// Regular routes
+app.use("/api/fetch", fetchProducts);
+app.use("/api/products", addProduct);
+app.use("/api/cart", fetchCart);
+app.use("/api/cart", addCart);
+app.use("/api/guest-cart", guestCart);
+app.use("/api/guest-favorites", guestFavorites);
+app.use("/api/user/favorites", userFavorites);
+app.use("/api/orders", orders);
 app.use("/api/user/addresses", userAddresses);
+
+
 
 
 app.listen(port, () => {

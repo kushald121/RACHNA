@@ -28,9 +28,9 @@ const ProductsPage = () => {
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get("http://localhost:5000/api/products");
+        const response = await axios.get("http://localhost:5000/api/fetch");
         // Transform the data to match your frontend structure
-        const transformedProducts = response.data.map(product => ({
+        const transformedProducts = response.data.products.map(product => ({
           id: product.id,
           name: product.name,
           description: product.description,
@@ -40,7 +40,7 @@ const ProductsPage = () => {
             null,
           category: product.category,
           gender: product.gender, // Using gender instead of brand
-          image: product.media_url || 'https://via.placeholder.com/300', // Default image if none
+          image: product.image || 'https://via.placeholder.com/300', // Default image if none
           rating: 4.5, // You might want to add ratings to your DB
           stock: product.stock
         }));

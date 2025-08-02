@@ -13,13 +13,13 @@
         // General Information about the product
         name: 'Nike Sportswear Club',
         price: '$30',
-        to: '/luna-demomen/men/clothing/tops/nike2/Nike2',
-        
+        to: '/Rachna/men/clothing/tops/nike2',
+
         // Product Breadcrumbs
         breadcrumbs: [
-            { id: 1, name: 'Men', to: '/luna-demo/men' },
-            { id: 2, name: 'Clothing', to:'/luna-demo/men/clothing'},
-            { id: 3, name: 'Tops', to: '/luna-demo/men/clothing/tops' },
+            { id: 1, name: 'Men', to: '/Rachna/men' },
+            { id: 2, name: 'Clothing', to:'/Rachna/men/clothing'},
+            { id: 3, name: 'Tops', to: '/Rachna/men/clothing/tops' },
         ],
 
         //Product Images
@@ -76,7 +76,7 @@
             id: 1,
             name: 'Basic Tee',
             category: "Men's T-Shirts",
-            href: '/luna-demo/error',
+            href: '/Rachna/error',
             imageSrc: 'https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg',
             imageAlt: "Front of men's Basic Tee in black.",
             price: '$35',
@@ -86,7 +86,7 @@
             id: 2,
             name: 'Basic Tee',
             category: "Men's T-Shirts",
-            href: '/luna-demo/error',
+            href: '/Rachna/error',
             imageSrc: 'https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg',
             imageAlt: "Front of men's Basic Tee in black.",
             price: '$35',
@@ -96,7 +96,7 @@
             id: 3,
             name: 'Basic Tee',
             category: "Men's T-Shirts",
-            href: '/luna-demo/error',
+            href: '/Rachna/error',
             imageSrc: 'https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg',
             imageAlt: "Front of men's Basic Tee in black.",
             price: '$35',
@@ -106,7 +106,7 @@
             id: 4,
             name: 'Basic Tee',
             category: "Men's T-Shirts",
-            href: '/luna-demo/error',
+            href: '/Rachna/error',
             imageSrc: 'https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg',
             imageAlt: "Front of men's Basic Tee in black.",
             price: '$35',

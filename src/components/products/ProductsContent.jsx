@@ -52,22 +52,24 @@ const ProductsContent = () => {
       const transformedProducts = response.data.products.map(product => {
         const discountValue = parseFloat(product.discount);
         const currentPrice = parseFloat(product.price);
-        
+
+
+
         return {
           id: product.id,
           name: product.name,
           description: product.description,
           price: currentPrice, // This is the actual selling price (already discounted)
           currentPrice: currentPrice,
-          originalPrice: discountValue > 0 ? 
-            currentPrice / (1 - discountValue / 100) : 
+          originalPrice: discountValue > 0 ?
+            currentPrice / (1 - discountValue / 100) :
             null,
           category: product.category,
           gender: product.gender,
-          image: product.image ? 
-            (product.image.startsWith('http') ? 
-              product.image : 
-              `http://localhost:5000/public${product.image}`) : 
+          image: product.image ?
+            (product.image.startsWith('http') ?
+              product.image :
+              `http://localhost:5000/public${product.image}`) :
             'https://via.placeholder.com/300',
           rating: 4.5,
           stock: product.stock,
@@ -214,6 +216,28 @@ const ProductsContent = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Page Header */}
+        <div className="mb-8">
+          {/* Breadcrumb */}
+          <nav className="text-sm text-gray-500 mb-4">
+            <span>Shoes</span>
+            <span className="mx-2">/</span>
+            <span>All Shoes</span>
+            <span className="mx-2">/</span>
+            <span className="text-gray-900 font-medium">Nike Air Force 1 (162)</span>
+          </nav>
+
+          {/* Page Title */}
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Nike Air Force 1 (162)</h1>
+
+          {/* Category Tags */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">Lifestyle</span>
+            <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">Basketball</span>
+            <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">Nike By You</span>
+          </div>
+        </div>
+
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Desktop Sidebar */}
           <aside className="hidden lg:block w-80 flex-shrink-0">
@@ -228,20 +252,45 @@ const ProductsContent = () => {
 
           {/* Products Section */}
           <section className="flex-1">
-            {/* Mobile Filter Button */}
-            <div className="lg:hidden mb-6">
-              <button
-                onClick={() => setIsMobileFilterOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors"
-              >
-                <FiFilter className="w-4 h-4" />
-                <span className="text-sm font-medium">Filters</span>
-                {(filters.categories.length > 0) && (
-                  <span className="bg-indigo-500 text-white text-xs rounded-full px-2 py-0.5">
-                    {filters.categories.length}
-                  </span>
-                )}
-              </button>
+            {/* Header with Hide Filters and Sort By */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-4">
+                {/* Hide Filters Button - Desktop */}
+                <button className="hidden lg:flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                  Hide Filters
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {/* Mobile Filter Button */}
+                <button
+                  onClick={() => setIsMobileFilterOpen(true)}
+                  className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors"
+                >
+                  <FiFilter className="w-4 h-4" />
+                  <span className="text-sm font-medium">Filters</span>
+                  {(filters.categories.length > 0) && (
+                    <span className="bg-black text-white text-xs rounded-full px-2 py-0.5">
+                      {filters.categories.length}
+                    </span>
+                  )}
+                </button>
+              </div>
+
+              {/* Sort By */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Sort By</span>
+                <select className="text-sm border-none bg-transparent focus:ring-0 cursor-pointer">
+                  <option>Featured</option>
+                  <option>Newest</option>
+                  <option>Price: High-Low</option>
+                  <option>Price: Low-High</option>
+                </select>
+                <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
             </div>
 
             {/* Active Filters */}
@@ -250,7 +299,7 @@ const ProductsContent = () => {
             {/* Products Grid */}
             <motion.div
               layout
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6"
             >
               {filteredProducts.map((product, index) => (
                 <ProductCard
@@ -320,51 +369,201 @@ function HeroBanner() {
 
 // Filter Sidebar Component
 function FilterSidebar({ filters, setFilters, uniqueCategories, toggleCategory, clearFilters }) {
-  return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-6">Filters</h3>
+  const [expandedSections, setExpandedSections] = useState({
+    gender: true,
+    kids: false,
+    shopByPrice: true,
+    saleOffers: false,
+    colour: false,
+    brand: false,
+    collections: false,
+    width: false,
+    sports: false
+  });
 
-      {/* Categories */}
-      <div className="mb-6">
-        <h4 className="text-sm font-medium text-gray-700 mb-3">Categories</h4>
-        <div className="space-y-2">
-          {uniqueCategories.map(category => (
-            <label key={category} className="flex items-center">
-              <input
-                type="checkbox"
-                checked={filters.categories.includes(category)}
-                onChange={() => toggleCategory(category)}
-                className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-              />
-              <span className="ml-2 text-sm text-gray-600">{category}</span>
-            </label>
-          ))}
-        </div>
-      </div>
+  const toggleSection = (section) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
 
-      {/* Price Range */}
-      <div className="mb-6">
-        <h4 className="text-sm font-medium text-gray-700 mb-3">Max Price</h4>
-        <input
-          type="range"
-          min="100"
-          max="5000"
-          step="100"
-          value={filters.maxPrice}
-          onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: parseInt(e.target.value) }))}
-          className="w-full"
-        />
-        <div className="text-center text-gray-600 mt-2 text-sm">
-          Up to ₹{filters.maxPrice.toLocaleString("en-IN")}
-        </div>
-      </div>
-
+  const FilterSection = ({ title, isExpanded, onToggle, children }) => (
+    <div className="border-b border-gray-200 py-4">
       <button
-        onClick={clearFilters}
-        className="w-full py-2 px-4 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors"
+        onClick={onToggle}
+        className="flex items-center justify-between w-full text-left"
       >
-        Clear All Filters
+        <span className="text-sm font-medium text-gray-900">{title}</span>
+        <svg
+          className={`w-4 h-4 text-gray-600 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
       </button>
+      {isExpanded && (
+        <div className="mt-3 space-y-2">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="bg-white sticky top-6">
+      {/* Gender Filter */}
+      <FilterSection
+        title="Gender"
+        isExpanded={expandedSections.gender}
+        onToggle={() => toggleSection('gender')}
+      >
+        {['Men', 'Women', 'Unisex'].map(gender => (
+          <label key={gender} className="flex items-center">
+            <input
+              type="checkbox"
+              className="rounded border-gray-300 text-black focus:ring-black"
+            />
+            <span className="ml-2 text-sm text-gray-700">{gender}</span>
+          </label>
+        ))}
+      </FilterSection>
+
+      {/* Kids Filter */}
+      <FilterSection
+        title="Kids"
+        isExpanded={expandedSections.kids}
+        onToggle={() => toggleSection('kids')}
+      >
+        {['Boys', 'Girls'].map(kid => (
+          <label key={kid} className="flex items-center">
+            <input
+              type="checkbox"
+              className="rounded border-gray-300 text-black focus:ring-black"
+            />
+            <span className="ml-2 text-sm text-gray-700">{kid}</span>
+          </label>
+        ))}
+      </FilterSection>
+
+      {/* Shop By Price */}
+      <FilterSection
+        title="Shop By Price"
+        isExpanded={expandedSections.shopByPrice}
+        onToggle={() => toggleSection('shopByPrice')}
+      >
+        {['Under ₹ 2 500.00', '₹ 2 500.00 - ₹ 7 500.00', '₹ 7 500.00 - ₹ 12 500.00', 'Over ₹ 12 500.00'].map(price => (
+          <label key={price} className="flex items-center">
+            <input
+              type="checkbox"
+              className="rounded border-gray-300 text-black focus:ring-black"
+            />
+            <span className="ml-2 text-sm text-gray-700">{price}</span>
+          </label>
+        ))}
+      </FilterSection>
+
+      {/* Sale & Offers */}
+      <FilterSection
+        title="Sale & Offers"
+        isExpanded={expandedSections.saleOffers}
+        onToggle={() => toggleSection('saleOffers')}
+      >
+        <label className="flex items-center">
+          <input
+            type="checkbox"
+            className="rounded border-gray-300 text-black focus:ring-black"
+          />
+          <span className="ml-2 text-sm text-gray-700">Sale</span>
+        </label>
+      </FilterSection>
+
+      {/* Colour */}
+      <FilterSection
+        title="Colour"
+        isExpanded={expandedSections.colour}
+        onToggle={() => toggleSection('colour')}
+      >
+        {['Black', 'White', 'Blue', 'Red', 'Green'].map(color => (
+          <label key={color} className="flex items-center">
+            <input
+              type="checkbox"
+              className="rounded border-gray-300 text-black focus:ring-black"
+            />
+            <span className="ml-2 text-sm text-gray-700">{color}</span>
+          </label>
+        ))}
+      </FilterSection>
+
+      {/* Brand */}
+      <FilterSection
+        title="Brand"
+        isExpanded={expandedSections.brand}
+        onToggle={() => toggleSection('brand')}
+      >
+        {uniqueCategories.map(category => (
+          <label key={category} className="flex items-center">
+            <input
+              type="checkbox"
+              checked={filters.categories.includes(category)}
+              onChange={() => toggleCategory(category)}
+              className="rounded border-gray-300 text-black focus:ring-black"
+            />
+            <span className="ml-2 text-sm text-gray-700">{category}</span>
+          </label>
+        ))}
+      </FilterSection>
+
+      {/* Collections */}
+      <FilterSection
+        title="Collections (1)"
+        isExpanded={expandedSections.collections}
+        onToggle={() => toggleSection('collections')}
+      >
+        <label className="flex items-center">
+          <input
+            type="checkbox"
+            className="rounded border-gray-300 text-black focus:ring-black"
+          />
+          <span className="ml-2 text-sm text-gray-700">Basketball</span>
+        </label>
+      </FilterSection>
+
+      {/* Width */}
+      <FilterSection
+        title="Width"
+        isExpanded={expandedSections.width}
+        onToggle={() => toggleSection('width')}
+      >
+        {['Regular', 'Wide'].map(width => (
+          <label key={width} className="flex items-center">
+            <input
+              type="checkbox"
+              className="rounded border-gray-300 text-black focus:ring-black"
+            />
+            <span className="ml-2 text-sm text-gray-700">{width}</span>
+          </label>
+        ))}
+      </FilterSection>
+
+      {/* Sports */}
+      <FilterSection
+        title="Sports"
+        isExpanded={expandedSections.sports}
+        onToggle={() => toggleSection('sports')}
+      >
+        {['Basketball', 'Running', 'Training', 'Lifestyle'].map(sport => (
+          <label key={sport} className="flex items-center">
+            <input
+              type="checkbox"
+              className="rounded border-gray-300 text-black focus:ring-black"
+            />
+            <span className="ml-2 text-sm text-gray-700">{sport}</span>
+          </label>
+        ))}
+      </FilterSection>
     </div>
   );
 }
@@ -391,7 +590,7 @@ function MobileFilterModal({ isOpen, onClose, filters, setFilters, uniqueCategor
           >
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Filter</h3>
                 <button
                   onClick={onClose}
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -423,9 +622,8 @@ function ActiveFilters({ filters, onRemove }) {
   if (activeFilters.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+    <div className="mb-6">
       <div className="flex items-center flex-wrap gap-2">
-        <span className="text-sm font-medium text-gray-700 mr-2">Active Filters:</span>
         {activeFilters.map(({ type, value }) => (
           <motion.div
             key={value}
@@ -434,13 +632,13 @@ function ActiveFilters({ filters, onRemove }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, x: -10 }}
           >
-            <span className="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 border border-indigo-200">
+            <span className="inline-flex items-center gap-x-1.5 py-2 px-4 rounded-full text-sm font-medium bg-gray-100 text-gray-800 border border-gray-200">
               {value}
               <button
                 onClick={() => onRemove(type, value)}
-                className="group -mr-1 h-3.5 w-3.5 rounded-full hover:bg-indigo-200"
+                className="group -mr-1 h-4 w-4 rounded-full hover:bg-gray-200"
               >
-                <FiX className="h-3.5 w-3.5 text-indigo-600 group-hover:text-indigo-800" />
+                <FiX className="h-4 w-4 text-gray-600 group-hover:text-gray-800" />
               </button>
             </span>
           </motion.div>
@@ -458,12 +656,6 @@ function ProductCard({ product, isWishlisted, onToggleWishlist, authContext }) {
     once: true,
     margin: "-100px 0px -100px 0px"
   });
-
-  const discount = product.originalPrice
-    ? Math.round(
-        ((product.originalPrice - product.price) / product.originalPrice) * 100
-      )
-    : 0;
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-IN", {
@@ -495,28 +687,29 @@ function ProductCard({ product, isWishlisted, onToggleWishlist, authContext }) {
       initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       transition={{ duration: 0.5 }}
-      className="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300"
+      className="group cursor-pointer"
+      onClick={() => navigate(`/Rachna/product/${product.id}`)}
     >
       {/* Image Container */}
-      <div className="relative aspect-square overflow-hidden bg-gray-100">
+      <div className="relative aspect-square overflow-hidden bg-gray-100 rounded-lg">
         <img
           src={product.image}
           alt={product.name}
+          crossOrigin="anonymous"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          onError={(e) => {
+            e.target.src = 'https://via.placeholder.com/300x300/E5E7EB/9CA3AF?text=Image+Error';
+          }}
         />
 
-        {/* Discount Badge */}
-        {discount > 0 && (
-          <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-            {discount}% OFF
-          </div>
-        )}
-
-        {/* Action Buttons */}
-        <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        {/* Action Buttons - Top Right */}
+        <div className="absolute top-3 right-3 flex flex-col gap-2">
           <button
-            onClick={() => onToggleWishlist(product.id)}
-            className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleWishlist(product.id);
+            }}
+            className="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-sm hover:bg-white transition-all duration-200 opacity-0 group-hover:opacity-100"
           >
             {isWishlisted ? (
               <FaHeart className="w-4 h-4 text-red-500" />
@@ -525,59 +718,44 @@ function ProductCard({ product, isWishlisted, onToggleWishlist, authContext }) {
             )}
           </button>
           <button
-            onClick={() => navigate(`/luna-demo/product/${product.id}`)}
-            className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAddToCart();
+            }}
+            className="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-sm hover:bg-white transition-all duration-200 opacity-0 group-hover:opacity-100"
           >
-            <FiEye className="w-4 h-4 text-gray-600" />
-          </button>
-        </div>
-
-        {/* Quick Add to Cart */}
-        <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <button
-            onClick={handleAddToCart}
-            className="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
-          >
-            <FiShoppingCart className="w-4 h-4" />
-            Add to Cart
+            <FiShoppingCart className="w-4 h-4 text-gray-600" />
           </button>
         </div>
       </div>
 
-      {/* Details & Call-to-Action Area */}
-      <div className="p-6 flex flex-col flex-1">
-        <div className="flex-1">
-          <p className="text-xs text-zinc-500 uppercase tracking-wider mb-1">
-            {product.gender}
-          </p>
-          <h3 className="font-semibold text-zinc-800 text-lg leading-tight mb-3">
-            {product.name}
-          </h3>
-          <div className="flex items-baseline gap-2 mt-4">
-            <span className="text-2xl font-bold text-zinc-900">
-              {formatCurrency(product.price)}
-            </span>
-            {product.originalPrice && (
-              <span className="text-sm text-zinc-400 line-through">
-                {formatCurrency(product.originalPrice)}
-              </span>
-            )}
-          </div>
-        </div>
+      {/* Product Details */}
+      <div className="pt-4">
+        {/* Product Name */}
+        <h3 className="text-sm lg:text-base font-medium text-gray-900 mb-1 line-clamp-2 group-hover:text-gray-700 transition-colors">
+          {product.name}
+        </h3>
 
-        {/* Rating */}
-        <div className="flex items-center gap-1 mt-4">
-          {[...Array(5)].map((_, i) => (
-            <FaStar
-              key={i}
-              className={`w-4 h-4 ${
-                i < Math.floor(product.rating)
-                  ? "text-yellow-400"
-                  : "text-gray-300"
-              }`}
-            />
-          ))}
-          <span className="text-sm text-gray-500 ml-1">({product.rating})</span>
+        {/* Product Category/Gender */}
+        <p className="text-xs lg:text-sm text-gray-500 mb-2">
+          {product.gender}'s {product.category}
+        </p>
+
+        {/* Color count - simulated */}
+        <p className="text-xs lg:text-sm text-gray-500 mb-3">
+          1 Colour
+        </p>
+
+        {/* Price */}
+        <div className="flex items-center gap-2">
+          <span className="text-sm lg:text-base font-semibold text-gray-900">
+            MRP : {formatCurrency(product.price)}
+          </span>
+          {product.originalPrice && (
+            <span className="text-xs lg:text-sm text-gray-400 line-through">
+              {formatCurrency(product.originalPrice)}
+            </span>
+          )}
         </div>
       </div>
     </motion.div>

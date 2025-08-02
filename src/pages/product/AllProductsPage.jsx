@@ -5,9 +5,13 @@ import { FiFilter, FiX, FiHeart, FiEye, FiShoppingCart } from "react-icons/fi";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { addToCart, addToFavorites, removeFromFavorites, isInFavorites } from "../../utils/cartUtils";
+import {
+  addToCart,
+  addToFavorites,
+  removeFromFavorites,
+  isInFavorites,
+} from "../../utils/cartUtils";
 import axios from "axios";
-
 
 // --- MAIN PRODUCTS PAGE COMPONENT ---
 const ProductsPage = () => {
@@ -30,44 +34,55 @@ const ProductsPage = () => {
       try {
         setIsLoading(true);
 
-        const response = await axios.get("http://localhost:5000/api/fetch/");
+        const response = await axios.get("http://localhost:5000/api/fetch");
 
-        if (!response.data.success || !response.data.products || response.data.products.length === 0) {
+
+
+        if (
+          !response.data.success ||
+          !response.data.products ||
+          response.data.products.length === 0
+        ) {
+          console.log('No products found or API error');
           setProducts([]);
           setFilteredProducts([]);
           return;
         }
 
         // Transform the data
-        const transformedProducts = response.data.products.map(product => {
+        const transformedProducts = response.data.products.map((product) => {
           const discountValue = parseFloat(product.discount);
           const currentPrice = parseFloat(product.price);
-          
+
+
+
           return {
             id: product.id,
             name: product.name,
             description: product.description,
             price: currentPrice, // This is the actual selling price (already discounted)
             currentPrice: currentPrice, // Add this for filtering
-            originalPrice: discountValue > 0 ?
-              currentPrice / (1 - discountValue / 100) :
-              null, // Calculate what the original price was before discount
+            originalPrice:
+              discountValue > 0
+                ? currentPrice / (1 - discountValue / 100)
+                : null, // Calculate what the original price was before discount
             category: product.category,
             gender: product.gender,
-            image: product.image ?
-              (product.image.startsWith('http') ?
-                product.image :
-                `http://localhost:5000/public${product.image}`) :
-              'https://via.placeholder.com/300',
+            image: product.image
+              ? product.image.startsWith("http")
+                ? product.image
+                : `http://localhost:5000/public${product.image}`
+              : "https://via.placeholder.com/300",
             rating: 4.5,
             stock: product.stock,
-            sizes: product.sizes
+            sizes: product.sizes,
           };
         });
 
         // Remove duplicates (same product with multiple images - keep first one)
-        const uniqueProducts = transformedProducts.filter((product, index, self) => 
-          index === self.findIndex(p => p.id === product.id)
+        const uniqueProducts = transformedProducts.filter(
+          (product, index, self) =>
+            index === self.findIndex((p) => p.id === product.id)
         );
 
         setProducts(uniqueProducts);
@@ -90,17 +105,24 @@ const ProductsPage = () => {
 
     // Filter by categories
     if (filters.categories.length > 0) {
-      filtered = filtered.filter(product => {
+      filtered = filtered.filter((product) => {
         if (!product.category) return false;
-        return filters.categories.some(selectedCategory =>
-          product.category.toLowerCase().includes(selectedCategory.toLowerCase()) ||
-          selectedCategory.toLowerCase().includes(product.category.toLowerCase())
+        return filters.categories.some(
+          (selectedCategory) =>
+            product.category
+              .toLowerCase()
+              .includes(selectedCategory.toLowerCase()) ||
+            selectedCategory
+              .toLowerCase()
+              .includes(product.category.toLowerCase())
         );
       });
     }
 
     // Filter by price
-    filtered = filtered.filter(product => product.currentPrice <= filters.maxPrice);
+    filtered = filtered.filter(
+      (product) => product.currentPrice <= filters.maxPrice
+    );
 
     // Sort products
     switch (filters.sortBy) {
@@ -123,7 +145,11 @@ const ProductsPage = () => {
 
   const toggleWishlist = async (productId) => {
     try {
-      const authContext = { getCurrentSessionId, getSessionType, getAuthHeaders };
+      const authContext = {
+        getCurrentSessionId,
+        getSessionType,
+        getAuthHeaders,
+      };
       const isCurrentlyFavorite = wishlistedIds.has(productId);
 
       if (isCurrentlyFavorite) {
@@ -154,29 +180,36 @@ const ProductsPage = () => {
         }
       }
     } catch (error) {
-      console.error('Error toggling wishlist:', error);
+      console.error("Error toggling wishlist:", error);
     }
   };
 
   const removeFilter = (type, value) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      [type]: prev[type].filter(item => item !== value),
+      [type]: prev[type].filter((item) => item !== value),
     }));
   };
 
   // Get all unique categories from products
-  const allCategories = [...new Set(products.map(p => p.category).filter(Boolean))];
+  const allCategories = [
+    ...new Set(products.map((p) => p.category).filter(Boolean)),
+  ];
 
   // Define preferred categories, but also include any other categories found
-  const preferredCategories = ['T-shirt', 'Jacket', 'Hoodies'];
+  const preferredCategories = ["T-shirt", "Jacket", "Hoodies"];
   const uniqueCategories = [
-    ...preferredCategories.filter(cat =>
-      allCategories.some(prodCat => prodCat.toLowerCase().includes(cat.toLowerCase()))
+    ...preferredCategories.filter((cat) =>
+      allCategories.some((prodCat) =>
+        prodCat.toLowerCase().includes(cat.toLowerCase())
+      )
     ),
-    ...allCategories.filter(cat =>
-      !preferredCategories.some(prefCat => cat.toLowerCase().includes(prefCat.toLowerCase()))
-    )
+    ...allCategories.filter(
+      (cat) =>
+        !preferredCategories.some((prefCat) =>
+          cat.toLowerCase().includes(prefCat.toLowerCase())
+        )
+    ),
   ];
 
   if (isLoading) {
@@ -241,9 +274,9 @@ const ProductsPage = () => {
                       transition: {
                         delay: index * 0.1,
                         duration: 0.6,
-                        ease: [0.25, 0.46, 0.45, 0.94]
-                      }
-                    }
+                        ease: [0.25, 0.46, 0.45, 0.94],
+                      },
+                    },
                   }}
                   initial="hidden"
                   animate="visible"
@@ -252,7 +285,11 @@ const ProductsPage = () => {
                     product={product}
                     isWishlisted={wishlistedIds.has(product.id)}
                     onToggleWishlist={() => toggleWishlist(product.id)}
-                    authContext={{ getCurrentSessionId, getSessionType, getAuthHeaders }}
+                    authContext={{
+                      getCurrentSessionId,
+                      getSessionType,
+                      getAuthHeaders,
+                    }}
                   />
                 </motion.div>
               ))}
@@ -280,7 +317,13 @@ function HeroBanner() {
 }
 
 // --- MODIFIED FILTERS SIDEBAR ---
-function FiltersSidebar({ isOpen, onClose, filters, setFilters, uniqueCategories }) {
+function FiltersSidebar({
+  isOpen,
+  onClose,
+  filters,
+  setFilters,
+  uniqueCategories,
+}) {
   const handleFilterChange = (type, value) =>
     setFilters((prev) => ({
       ...prev,
@@ -298,10 +341,15 @@ function FiltersSidebar({ isOpen, onClose, filters, setFilters, uniqueCategories
 
   const FilterSection = ({ title, items, selectedItems, onChange }) => (
     <div className="py-5 border-b border-gray-200">
-      <h4 className="font-semibold text-gray-700 mb-4 tracking-wide uppercase text-xs">{title}</h4>
+      <h4 className="font-semibold text-gray-700 mb-4 tracking-wide uppercase text-xs">
+        {title}
+      </h4>
       <div className="space-y-3">
         {items.map((item) => (
-          <label key={item} className="flex items-center cursor-pointer group hover:bg-gray-50 p-2 rounded transition-colors">
+          <label
+            key={item}
+            className="flex items-center cursor-pointer group hover:bg-gray-50 p-2 rounded transition-colors"
+          >
             <input
               type="checkbox"
               onChange={() => onChange(item)}
@@ -320,7 +368,9 @@ function FiltersSidebar({ isOpen, onClose, filters, setFilters, uniqueCategories
   const sidebarContent = (
     <div className="p-7 h-full overflow-y-auto bg-white">
       <div className="flex justify-between items-center pb-4 mb-2 border-b border-gray-200">
-        <h3 className="text-2xl font-bold text-gray-900 tracking-tight">Filters</h3>
+        <h3 className="text-2xl font-bold text-gray-900 tracking-tight">
+          Filters
+        </h3>
         <button
           onClick={onClose}
           className="lg:hidden text-gray-500 hover:text-gray-800 transition-colors"
@@ -336,7 +386,10 @@ function FiltersSidebar({ isOpen, onClose, filters, setFilters, uniqueCategories
           onChange={(v) => handleFilterChange("categories", v)}
         />
         <div className="py-5">
-          <label htmlFor="price" className="font-semibold text-gray-800 mb-4 block">
+          <label
+            htmlFor="price"
+            className="font-semibold text-gray-800 mb-4 block"
+          >
             Max Price
           </label>
           <input
@@ -416,8 +469,8 @@ const cardVariants = {
       ease: [0.25, 0.46, 0.45, 0.94],
       type: "spring",
       stiffness: 100,
-      damping: 15
-    }
+      damping: 15,
+    },
   },
   hover: {
     y: -8,
@@ -425,9 +478,9 @@ const cardVariants = {
     rotateY: 2,
     transition: {
       duration: 0.3,
-      ease: "easeOut"
-    }
-  }
+      ease: "easeOut",
+    },
+  },
 };
 
 const containerVariants = {
@@ -437,35 +490,26 @@ const containerVariants = {
     transition: {
       duration: 0.6,
       staggerChildren: 0.1,
-      delayChildren: 0.2
-    }
-  }
+      delayChildren: 0.2,
+    },
+  },
 };
 
-const imageVariants = {
-  hover: {
-    scale: 1.1,
-    rotate: 1,
-    transition: {
-      duration: 0.4,
-      ease: "easeOut"
-    }
-  }
-};
+
 
 const overlayVariants = {
   hidden: {
     opacity: 0,
-    scale: 0.8
+    scale: 0.8,
   },
   visible: {
     opacity: 1,
     scale: 1,
     transition: {
       duration: 0.3,
-      ease: "easeOut"
-    }
-  }
+      ease: "easeOut",
+    },
+  },
 };
 
 const buttonVariants = {
@@ -475,15 +519,15 @@ const buttonVariants = {
     boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
     transition: {
       duration: 0.2,
-      ease: "easeOut"
-    }
+      ease: "easeOut",
+    },
   },
   tap: {
     scale: 0.98,
     transition: {
-      duration: 0.1
-    }
-  }
+      duration: 0.1,
+    },
+  },
 };
 
 function ProductCard({ product, isWishlisted, onToggleWishlist, authContext }) {
@@ -491,7 +535,7 @@ function ProductCard({ product, isWishlisted, onToggleWishlist, authContext }) {
   const cardRef = useRef(null);
   const isInView = useInView(cardRef, {
     once: true,
-    margin: "-100px 0px -100px 0px"
+    margin: "-100px 0px -100px 0px",
   });
 
   const discount = product.originalPrice
@@ -522,7 +566,7 @@ function ProductCard({ product, isWishlisted, onToggleWishlist, authContext }) {
         }
       }
     } catch (error) {
-      console.error('Error adding to cart:', error);
+      console.error("Error adding to cart:", error);
     }
   };
 
@@ -537,7 +581,7 @@ function ProductCard({ product, isWishlisted, onToggleWishlist, authContext }) {
       className="bg-white rounded-3xl flex flex-col overflow-hidden group relative border border-zinc-200/80 shadow-lg shadow-zinc-200/40 transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-200/40"
       style={{
         transformStyle: "preserve-3d",
-        perspective: "1000px"
+        perspective: "1000px",
       }}
     >
       {/* Wishlist Button */}
@@ -549,7 +593,11 @@ function ProductCard({ product, isWishlisted, onToggleWishlist, authContext }) {
         className={`absolute top-80 right-6 z-10 flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-xl border-2 border-zinc-200
                    transform -translate-y-1/2 transition-all duration-300 ease-in-out
                    group-hover:scale-110 group-hover:-translate-y-[60%] hover:shadow-2xl
-                   ${isWishlisted ? "text-rose-500 border-rose-200 bg-rose-50" : "text-zinc-500 hover:text-rose-500 hover:border-rose-200 hover:bg-rose-50"}`}
+                   ${
+                     isWishlisted
+                       ? "text-rose-500 border-rose-200 bg-rose-50"
+                       : "text-zinc-500 hover:text-rose-500 hover:border-rose-200 hover:bg-rose-50"
+                   }`}
       >
         <motion.div
           animate={isWishlisted ? { scale: [1, 1.2, 1] } : { scale: 1 }}
@@ -562,19 +610,21 @@ function ProductCard({ product, isWishlisted, onToggleWishlist, authContext }) {
       {/* Image Area */}
       <motion.div
         className="relative w-full h-80 overflow-hidden bg-zinc-100 cursor-pointer"
-        onClick={() => navigate(`/luna-demo/product/${product.id}`)}
+        onClick={() => navigate(`/Rachna/product/${product.id}`)}
         whileHover={{ scale: 1.02 }}
         transition={{ duration: 0.3 }}
       >
-        <motion.img
+        <img
+          key={`product-image-${product.id}`}
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover"
-          variants={imageVariants}
-          whileHover="hover"
-          transition={{ duration: 0.4, ease: "easeOut" }}
+          crossOrigin="anonymous"
+          className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+          onError={(e) => {
+            e.target.src = 'https://via.placeholder.com/300x300/E5E7EB/9CA3AF?text=Image+Error';
+          }}
         />
-        
+
         {discount > 0 && (
           <span className="absolute top-3 left-3 bg-gradient-to-r from-rose-500 via-indigo-500 to-zinc-900 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
             {discount}% OFF
@@ -588,7 +638,7 @@ function ProductCard({ product, isWishlisted, onToggleWishlist, authContext }) {
           whileHover="visible"
         >
           <motion.button
-            onClick={() => navigate(`/luna-demo/product/${product.id}`)}
+            onClick={() => navigate(`/Rachna/product/${product.id}`)}
             className="flex items-center gap-2 text-white font-semibold py-2 px-4 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
             variants={buttonVariants}
             whileHover="hover"
@@ -658,17 +708,17 @@ function PageHeader({ productCount, filters, setFilters }) {
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">
-            All Products
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900">All Products</h2>
           <p className="text-sm text-gray-600 mt-1">
-            Showing {productCount} product{productCount !== 1 ? 's' : ''}
+            Showing {productCount} product{productCount !== 1 ? "s" : ""}
           </p>
         </div>
         <div className="flex items-center gap-4">
           <label className="text-sm font-medium text-gray-700">Sort by:</label>
           <select
-            onChange={(e) => setFilters(prev => ({ ...prev, sortBy: e.target.value }))}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, sortBy: e.target.value }))
+            }
             value={filters.sortBy}
             className="w-full md:w-52 p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-base text-gray-700 bg-white shadow-sm transition-colors"
           >
@@ -692,26 +742,28 @@ function ActiveFilters({ filters, onRemove }) {
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
       <div className="flex items-center flex-wrap gap-2">
-        <span className="text-sm font-medium text-gray-700 mr-2">Active Filters:</span>
-      {activeFilters.map(({ type, value }) => (
-        <motion.div
-          key={value}
-          layout
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, x: -10 }}
-        >
-          <span className="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-gradient-to-r from-rose-100 via-indigo-100 to-zinc-100 text-zinc-800 border border-zinc-200">
-            {value}
-            <button
-              onClick={() => onRemove(type, value)}
-              className="group -mr-1 h-3.5 w-3.5 rounded-full hover:bg-zinc-800/20"
-            >
-              <FiX className="h-3.5 w-3.5 text-zinc-600 group-hover:text-zinc-800" />
-            </button>
-          </span>
-        </motion.div>
-      ))}
+        <span className="text-sm font-medium text-gray-700 mr-2">
+          Active Filters:
+        </span>
+        {activeFilters.map(({ type, value }) => (
+          <motion.div
+            key={value}
+            layout
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, x: -10 }}
+          >
+            <span className="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-gradient-to-r from-rose-100 via-indigo-100 to-zinc-100 text-zinc-800 border border-zinc-200">
+              {value}
+              <button
+                onClick={() => onRemove(type, value)}
+                className="group -mr-1 h-3.5 w-3.5 rounded-full hover:bg-zinc-800/20"
+              >
+                <FiX className="h-3.5 w-3.5 text-zinc-600 group-hover:text-zinc-800" />
+              </button>
+            </span>
+          </motion.div>
+        ))}
       </div>
     </div>
   );

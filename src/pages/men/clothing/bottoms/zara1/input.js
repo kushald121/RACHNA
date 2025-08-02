@@ -13,7 +13,7 @@
         // General Information about the product
         name: 'Comfort Performance Pocket Pants',
         price: '$50',
-        to: '/luna-demomen/clothing/zara1/Zara1',
+        to: '/Rachna/men/clothing/bottoms/zara1',
         
         // Product Breadcrumbs
         breadcrumbs: [

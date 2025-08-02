@@ -34,6 +34,7 @@ function Fav() {
 
     useEffect(() => {
         fetchFavorites();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleRemoveFromFavorites = async (productId) => {
@@ -139,7 +140,7 @@ function Fav() {
                                 Start adding items you love to your wishlist
                             </p>
                             <Link
-                                to="/luna-demo/products"
+                                to="/Rachna/allproducts"
                                 className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full text-white bg-gradient-to-r from-rose-500 via-indigo-500 to-zinc-900 hover:from-zinc-900 hover:to-rose-500 transition-all duration-300 shadow-lg hover:shadow-xl"
                             >
                                 Continue Shopping
@@ -171,7 +172,7 @@ function Fav() {
                                         {/* Product Details */}
                                         <div className="flex-1 min-w-0">
                                             <Link
-                                                to={`/luna-demo/product/${item.productId}`}
+                                                to={`/Rachna/product/${item.productId}`}
                                                 className="block"
                                             >
                                                 <h3 className="text-lg font-semibold text-gray-900 hover:text-indigo-600 transition-colors duration-200 line-clamp-2">

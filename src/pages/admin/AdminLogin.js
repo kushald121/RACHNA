@@ -18,12 +18,21 @@ const AdminLogin = () => {
             email, password
         });
 
-        console.log("Login Response:", response.data); // ✅ Check here
+        console.log("Login Response:", response.data);
 
         if (response.data.token) {
-          console.log(response.data.token);
+            console.log(response.data.token);
             localStorage.setItem("adminToken", response.data.token);
-            navigate("/Rachna/admincontrol");
+
+            // Check if there's a redirect path stored (from protected route attempt)
+            const redirectPath = localStorage.getItem("adminRedirectPath");
+            if (redirectPath && redirectPath !== "/Rachna/admin-login/") {
+                localStorage.removeItem("adminRedirectPath");
+                navigate(redirectPath);
+            } else {
+                // Default redirect to admin control panel
+                navigate("/Rachna/admincontrol");
+            }
         } else {
             alert("Token not received from server");
         }

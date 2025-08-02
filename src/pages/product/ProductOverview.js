@@ -109,6 +109,7 @@ const ProductOverview = () => {
                 <img
                   src={thumbnail}
                   alt="Main showcase product visual"
+                  crossOrigin="anonymous"
                   className="object-cover w-full h-full transition-transform duration-300 hover:scale-110"
                   style={{ aspectRatio: `${aspectWidth} / ${aspectHeight}` }}
                 />
@@ -130,6 +131,7 @@ const ProductOverview = () => {
                     <img
                       src={img}
                       alt={`Product thumbnail ${idx + 1}`}
+                      crossOrigin="anonymous"
                       className="object-cover object-center w-full h-full group-hover:scale-105 transition-transform duration-200"
                     />
                     {thumbnail === img && (
@@ -190,6 +192,7 @@ const ProductOverview = () => {
                     <img
                       src={img}
                       alt={`Product thumbnail ${idx + 1}`}
+                      crossOrigin="anonymous"
                       className="object-contain w-full h-full rounded-lg"
                     />
                   </button>

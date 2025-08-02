@@ -99,6 +99,7 @@ const ProductOverview = ({ product, reviews }) => {
               <img
                 src={product.images[selectedImageIndex].src}
                 alt={product.images[selectedImageIndex].alt}
+                crossOrigin="anonymous"
                 className="h-full w-auto object-cover object-center"
               />
             </motion.div>
@@ -111,6 +112,7 @@ const ProductOverview = ({ product, reviews }) => {
                   key={index}
                   src={image.src}
                   alt={image.alt}
+                  crossOrigin="anonymous"
                   // Image panels
                   className={`mt-8 h-28 w-28 rounded-lg shadow-lg object-cover object-center cursor-pointer ${
                     selectedImageIndex === index ? 'opacity-75 transition-transform duration-300 transform hover:scale-95' : ''

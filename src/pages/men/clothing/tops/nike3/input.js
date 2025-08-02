@@ -13,7 +13,7 @@
         // General Information about the product
         name: 'Nike Sportswear Max90',
         price: '$45',
-        to: '/luna-demomen/men/clothing/tops/nike3/Nike3',
+        to: '/Rachna/men/clothing/tops/nike3',
         
         // Product Breadcrumbs
         breadcrumbs: [

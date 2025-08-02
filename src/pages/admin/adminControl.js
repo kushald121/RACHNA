@@ -51,13 +51,27 @@ const AdminControl = () => {
         return <div className="flex items-center justify-center min-h-screen text-2xl font-bold">Loading...</div>;
     }
 
+    const handleLogout = () => {
+        localStorage.removeItem("adminToken");
+        localStorage.removeItem("adminRedirectPath");
+        navigate("/Rachna/admin-login/");
+    };
+
     if (!authorized) return null;
 
     return (
         <div className="bg-gray-100 min-h-screen">
             <NavBar />
             <div ref={dashboardRef} className="max-w-7xl mx-auto p-6">
-                <h1 className="text-4xl font-bold text-center mb-10">Admin Dashboard</h1>
+                <div className="flex justify-between items-center mb-10">
+                    <h1 className="text-4xl font-bold">Admin Dashboard</h1>
+                    <button
+                        onClick={handleLogout}
+                        className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold transition duration-300 transform hover:scale-105"
+                    >
+                        Logout
+                    </button>
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <Link to="/Rachna/addproduct" className="bg-white rounded-xl shadow-md p-6 hover:scale-105 transform transition duration-300 cursor-pointer">

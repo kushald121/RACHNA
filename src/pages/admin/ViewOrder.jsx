@@ -109,11 +109,12 @@ const ViewOrder = () => {
     });
   };
 
-  const updateOrderStatus = async (orderId, newStatus) => {
+  const updateOrderStatus = async (orderId, newStatus, notes = '') => {
     try {
       const token = localStorage.getItem('adminToken');
       const response = await axios.put(`http://localhost:5000/api/orders/admin/${orderId}/status`, {
-        status: newStatus
+        status: newStatus,
+        notes: notes
       }, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -123,6 +124,7 @@ const ViewOrder = () => {
       if (response.data.success) {
         // Refresh orders
         fetchOrders();
+        setError(''); // Clear any previous errors
       } else {
         setError('Failed to update order status');
       }
@@ -283,13 +285,17 @@ const ViewOrder = () => {
                           <div className="flex space-x-2">
                             <select
                               value={order.order_status || ''}
-                              onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                              onChange={(e) => {
+                                const newStatus = e.target.value;
+                                const notes = prompt(`Add notes for status change to ${newStatus}:`);
+                                updateOrderStatus(order.id, newStatus, notes || '');
+                              }}
                               className="text-xs border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                             >
-                              <option value="pending">Pending</option>
-                              <option value="confirmed">Confirmed</option>
-                              <option value="delivered">Delivered</option>
-                              <option value="cancelled">Cancelled</option>
+                              <option value="Pending">Pending</option>
+                              <option value="Confirmed">Confirmed</option>
+                              <option value="Delivered">Delivered</option>
+                              <option value="Cancelled">Cancelled</option>
                             </select>
                           </div>
                         </td>

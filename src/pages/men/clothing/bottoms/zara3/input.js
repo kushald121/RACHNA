@@ -13,13 +13,13 @@
         // General Information about the product
         name: 'Basic Soft Denim Shorts',
         price: '$45',
-        to: '/luna-demomen/clothing/zara3/Zara3',
-        
+        to: '/Rachna/men/clothing/bottoms/zara3',
+
         // Product Breadcrumbs
         breadcrumbs: [
-            { id: 1, name: 'Men', to: '/luna-demo/men' },
-            { id: 2, name: 'Clothing', to:'/luna-demo/men/clothing'},
-            { id: 3, name: 'Bottoms', to: '/luna-demo/men/clothing/bottoms' },
+            { id: 1, name: 'Men', to: '/Rachna/men' },
+            { id: 2, name: 'Clothing', to:'/Rachna/men/clothing'},
+            { id: 3, name: 'Bottoms', to: '/Rachna/men/clothing/bottoms' },
         ],
 
         //Product Images

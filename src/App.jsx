@@ -21,11 +21,12 @@ import DeleteProduct from "./pages/admin/DeleteProduct.js";
 import UpdateProduct from "./pages/admin/UpdateProduct.js";
 import ViewOrder from "./pages/admin/ViewOrder.jsx";
 
+
 import AllProductsPage from './pages/product/AllProductsPage.jsx';
 
 
 // Core Function
-import { Home, Error,  NewArrivals } from './pages';
+import { Home, Error } from './pages';
 
 // Men Clothing
 import {
@@ -75,27 +76,26 @@ const App = () => {
           {/* User Authentication */}
           <Route path="/Rachna/user-login/" element={<UserLogin />} />
 
-          {/* Protected Routes */}
+          {/* Admin Login (Not Protected - Users need access to login) */}
+          <Route path="/Rachna/admin-login/" element={<AdminLogin />} />
+
+          {/* Protected Admin Routes - Only accessible after admin login */}
           <Route element={<ProtectedRoutes/>}>
             <Route element={<AdminControl/>} path="/Rachna/admincontrol" />
             <Route element={<AddProduct/>} path="/Rachna/addproduct"/>
             <Route element={<DeleteProduct/>} path="/Rachna/deleteproduct"/>
             <Route element={<UpdateProduct/>} path="/Rachna/updateproduct"/>
             <Route element={<ViewOrder/>} path="/Rachna/vieworders"/>
-          </Route>
-       
+            <Route element={<AdminProductPages />} path="/Rachna/productpages"/>
 
-          {/* Admin */}
+          </Route>
+
+          {/* Public Routes */}
           <Route path="/Rachna/error/" element={<Error />} />
-          <Route path="/Rachna/new-arrivals/" element={<NewArrivals />} />
-          <Route path="/Rachna/admin-login/" element={<AdminLogin />} />
           <Route path="/Rachna/favorites/" element={<Fav />} />
-          <Route path="/Rachna/productpages/" element={<AdminProductPages />} />
           <Route path="/Rachna/productoverview/" element={<ProductOverview />} />
           <Route path="/Rachna/product/:productId" element={<DynamicProductOverview />} />
           <Route path="/Rachna/allproducts/" element={<AllProductsPage/>} />
-          <Route path = "/Rachna/deleteproduct/" element={<DeleteProduct/>}/>
-          <Route path = "/Rachna/updateproduct/" element={<UpdateProduct/>}/>
 
           {/* Men Clothing */}
           <Route path="/Rachna/men/" element={<Men />} />
@@ -153,6 +153,8 @@ const App = () => {
 
           {/* Women Clothing */}
           <Route path="/Rachna/user1" element={<User1/>}/>
+
+
 
         </Routes>
         </div>

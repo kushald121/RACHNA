@@ -13,13 +13,13 @@
         // General Information about the product
         name: 'Contrast Topstitching Shorts',
         price: '$40',
-        to: '/luna-demomen/clothing/zara4/Zara4',
-        
+        to: '/Rachna/men/clothing/bottoms/zara4',
+
         // Product Breadcrumbs
         breadcrumbs: [
-            { id: 1, name: 'Men', to: '/luna-demo/men' },
-            { id: 2, name: 'Clothing', to:'/luna-demo/men/clothing'},
-            { id: 3, name: 'Bottoms', to: '/luna-demo/men/clothing/bottoms' },
+            { id: 1, name: 'Men', to: '/Rachna/men' },
+            { id: 2, name: 'Clothing', to:'/Rachna/men/clothing'},
+            { id: 3, name: 'Bottoms', to: '/Rachna/men/clothing/bottoms' },
         ],
 
         //Product Images
